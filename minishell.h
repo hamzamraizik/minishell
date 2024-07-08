@@ -43,5 +43,12 @@ typedef struct s_list
 int		check_if_empty(char *line);
 void	*creat_node(char *content, int type);
 void	list_add_back(t_list **head, t_list *new);
+char	**ft_split(char const *s, char c);
+char	*ft_strchr(const char *s, int c);
+char	*ft_strdup(const char *s1);
+char	*ft_strjoin(char const *s1, char const *s2);
+size_t	ft_strlen(const char *str);
+void	*ft_memcpy(void *dest, const void *src, size_t n);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
 
 #endif // MINISHELL_H
