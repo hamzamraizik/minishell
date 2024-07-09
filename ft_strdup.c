@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 19:04:48 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/08 17:52:07 by hmraizik         ###   ########.fr       */
+/*   Updated: 2024/07/09 21:05:11 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_strdup(const char *s1)
+char	*ft_strdup(const char *s1, int n)
 {
 	size_t	len;
 	char	*s2;
 
-	len = ft_strlen(s1) + 1;
+	len = n + 1;
 	s2 = malloc(len);
 	if (s1 == NULL)
 		return (NULL);

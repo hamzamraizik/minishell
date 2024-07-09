@@ -1,37 +1,24 @@
 #include "minishell.h"
 
-// void tokenizing(t_list **head, char *line)
-// {
-// 	int		i;
+void	tokenizing(t_list **head, char **line)
+{
+    int	i;
 
-// 	i = 0;
-// 	while (line[i])
-// 	{
-// 		if (line[i] == '|')
-// 			list_add_back(head, creat_node("|", PIPE));
-// 		else if (line[i] == '<')
-// 			list_add_back(head, creat_node("<", IN));
-// 		else if (line[i] == '>')
-// 			list_add_back(head, creat_node(">", OUT));
-// 		else if (line[i] == ';')
-// 			list_add_back(head, creat_node(";", SEMI));
-// 		else if (line[i] == ' ')
-// 			list_add_back(head, creat_node(" ", SPACE));
-// 		else if (line[i] == '\n')
-// 			list_add_back(head, creat_node("\n", NEWLINE));
-// 		else
-// 		{
-// 			// add word to the list
-// 			// while (line[i] && line[i] != '|' && line[i] != '<' && line[i] != '>' && line[i] != ';' && line[i] != ' ' && line[i] != '\n')
-// 			// 	i++;
-// 			// list_add_back(head, creat_node("word", WORD));
-// 		}
-// 	}
-// }
-
-
-// hello "hii 'aa'bb' hoo" world
-
+	i = 0;
+    while (line[i]) {
+        if (strcmp(line[i], "|") == 0)
+            list_add_back(head, creat_node("|", PIPE));
+        else if (strcmp(line[i],"<") == 0)
+            list_add_back(head, creat_node("<", IN));
+        else if (strcmp(line[i],">") == 0)
+            list_add_back(head, creat_node(">", OUT));
+        else if (strcmp(line[i],";") == 0)
+            list_add_back(head, creat_node(";", SEMI));
+        else
+        	list_add_back(head, creat_node(line[i], WORD));
+        i++;
+    }
+}
 
 char *add_delimetre(char *line)
 {
@@ -53,7 +40,7 @@ char *add_delimetre(char *line)
 
         if (is_quotes == 0 && line[i] == ' ')
         {
-            line[i] = 26;
+            line[i] = '\0';
             while(line[i + 1] == ' ' || line[i + 1] == '\t')
                 i++;
         }
@@ -67,40 +54,29 @@ char	*parse_line(char *line, int length)
 	char **new_line;
 	t_list	*head;
 
-	//add spaces before and after the special characters, for splitting the line into tokens.
-	int i = 0;
-	(void)length;
+	length = ft_strlen(line);
 	line = add_delimetre(line);
 	head = NULL;
-	new_line = ft_split(line, 26);
-	while(new_line[i] != NULL)
-	{
-		list_add_back(&head, creat_node(new_line[i], WORD));
-		i++;
-	}
+	new_line = ft_new_split(line, '\0', length);
+	tokenizing(&head, new_line);
 	while(head != NULL)
 	{
 		printf("%s\n", head->content);
 		head = head->next;
 	}
 	return line;
-	//parse the line into tokens.
-	// tokenizing(&head, line);
 }
 
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	int		line_length;
-	// char **args;
-	// int status;
+
 	(void)argc;
 	(void)argv;
 	(void)envp;
 	while (1)
 	{
-		// dup(1);
-		// printf(GRN"minishell> ");
 		line = readline(GRN"write a prompt: ");
 		if (check_if_empty(line))
 		{
@@ -111,14 +87,5 @@ int main(int argc, char **argv, char **envp)
 		add_history(line);
 		line_length = ft_strlen(line);
 		line = parse_line(line, line_length);
-		// int i = 0;
-		// while(i < line_length + 1)
-		// {
-		// 	if (line[i] == '\0')
-		// 		write(1, "X", 1);
-		// 	else
-		// 		write(1, &line[i], 1);
-		// 	i++;
-		// }
 	}
 }

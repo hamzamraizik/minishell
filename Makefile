@@ -1,7 +1,9 @@
 NAME = minishell
-CFILES = main.c utils1.c  ft_strlen.c  ft_strchr.c  ft_strjoin.c  ft_strdup.c  ft_memcpy.c ft_split.c ft_substr.c
+CFILES = main.c utils1.c  ft_strlen.c  ft_strchr.c  ft_strjoin.c  ft_strdup.c \
+ ft_memcpy.c ft_split.c ft_substr.c new_split.c
 OFILES = $(CFILES:.c=.o)
 CFLAGS = -Wall -Wextra -Werror
+LDFLAGS = -L/usr/lib/x86_64-linux-gnu -lreadline
 CC = gcc
 
 all: $(NAME)
@@ -10,7 +12,7 @@ all: $(NAME)
 	$(CC) $(CFLAGS) -c $<
 
 $(NAME): $(OFILES)
-	$(CC) $(CFLAGS)  -lreadline $(OFILES) -o $(NAME)
+	$(CC) $(CFLAGS) $(OFILES) $(LDFLAGS)  -o $(NAME)
 
 clean:
 	rm *.o
