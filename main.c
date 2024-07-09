@@ -56,8 +56,8 @@ char	*parse_line(char *line, int length)
 
 	length = ft_strlen(line);
 	line = add_delimetre(line);
-	head = NULL;
 	new_line = ft_new_split(line, '\0', length);
+	head = NULL;
 	tokenizing(&head, new_line);
 	while(head != NULL)
 	{

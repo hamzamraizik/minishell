@@ -56,10 +56,9 @@ char	**ft_new_split(const char *s, char c, size_t len)
 	substrs = (char **)malloc((count_word(s, c, len) + 1) * sizeof(char *));
 	if (!substrs)
 		return (NULL);
-
 	while (j < len)
 	{
-		while (j < len && s[j] == c)
+		while (j < len && (s[j] == c || s[j] == ' ' || s[j] == '\t'))
 			j++;
 		if (j < len)
 		{
