@@ -56,7 +56,7 @@ char	*parse_line(char *line, int length)
 	tokenizing(&head, new_line);
 	while(head != NULL)
 	{
-		printf("%s %s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "IN" : head->type == 3 ? "OUT" : head->type == 4 ? "SEMI" : "WORD");
+		printf("%s __________>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
 		head = head->next;
 	}
 	// check_validity(head);
@@ -83,7 +83,7 @@ int main(int argc, char **argv, char **envp)
 		// handle syntax error cases.
 		add_history(line);
 		line_2 = add_spaces(line);
-		printf("line_2: %s\n", line_2);
+		// printf("line_2: %s\n", line_2);
 		line_length = ft_strlen(line_2);
 		line_2 = parse_line(line_2, line_length);
 	}
