@@ -32,9 +32,10 @@ char *add_spaces(char *line)
 		{
 			c = line[i];
 			new_line[j] = ' ';
-			while (line[i] == c)
+			while (line[i] && line[i] == c)
 				new_line[++j] = line[i++];
 			new_line[++j] = ' ';
+			++j;
 		}
 		else
 			new_line[j++] = line[i++];
@@ -82,6 +83,7 @@ int main(int argc, char **argv, char **envp)
 		// handle syntax error cases.
 		add_history(line);
 		line_2 = add_spaces(line);
+		printf("line_2: %s\n", line_2);
 		line_length = ft_strlen(line_2);
 		line_2 = parse_line(line_2, line_length);
 	}
