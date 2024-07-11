@@ -52,5 +52,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	**ft_new_split(const char *s, char c, size_t len);
 void	tokenizing(t_list **head, char **line);
 char    *add_delimetre(char *line);
+int     check_special(char c);
 
 #endif // MINISHELL_H

@@ -1,52 +1,46 @@
 #include "minishell.h"
-int check_special(char c)
-{
-    if (c == '|' || c == '<' || c == '>' || c == ';' || c == '$')
-        return (1);
-    else
-        return (0);
-}
 
-int count_new_len(char *line, int old_len)
-{
-    int i;
 
-    i = 0;
-    while(line[i])
-    {
-        if(check_special(line[i]) && line[i + 1] != ' ')
-                old_len += 2;
-        i++;
-    }
-    return (old_len);
+int	count_new_len(char *line, int old_len)
+{
+	int i;
+
+	i = 0;
+	while(line[i])
+	{
+		if(check_special(line[i]) && line[i + 1] != ' ')
+				old_len += 2;
+		i++;
+	}
+	return (old_len);
 }
 
 char *add_spaces(char *line)
 {
-    int new_len;
-    char *new_line;
-    int i;
-    int j;
+	int				new_len;
+	char			*new_line;
+	unsigned char	c;
+	int				i;
+	int				j;
 
-    j = 0;
-    new_len = count_new_len(line, ft_strlen(line));
-    new_line = (char *)malloc(sizeof(char) * (new_len + 1));
-    i = 0;
-    while (line[i])
-    {
-        if (line[i] && check_special(line[i]))
-        {
-            new_line[j] = ' ';
-            new_line[++j] = line[i];
-            new_line[++j] = ' ';
-        }
-        else
-            new_line[j] = line[i];
-        i++;
-        j++;
-    }
-    new_line[j] = '\0';
-    return (free(line), new_line);
+	i = j = 0;
+	new_len = count_new_len(line, ft_strlen(line));
+	new_line = (char *)malloc(sizeof(char) * (new_len + 1));
+	while (line[i])
+	{
+		if (line[i] && check_special(line[i]))
+		{
+			c = line[i];
+			new_line[j] = ' ';
+			while (line[i] == c)
+				new_line[++j] = line[i++];
+			new_line[++j] = ' ';
+		}
+		else
+			new_line[j++] = line[i++];
+	}
+	new_line[j] = '\0';
+	return (free(line), new_line);
 }
 
 char	*parse_line(char *line, int length)
@@ -64,14 +58,14 @@ char	*parse_line(char *line, int length)
 		printf("%s %s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "IN" : head->type == 3 ? "OUT" : head->type == 4 ? "SEMI" : "WORD");
 		head = head->next;
 	}
-    // check_validity(head);
+	// check_validity(head);
 	return (line);
 }
 
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
-    char    *line_2;
+	char    *line_2;
 	int		line_length;
 
 	(void)argc;
@@ -87,7 +81,7 @@ int main(int argc, char **argv, char **envp)
 		}
 		// handle syntax error cases.
 		add_history(line);
-        line_2 = add_spaces(line);
+		line_2 = add_spaces(line);
 		line_length = ft_strlen(line_2);
 		line_2 = parse_line(line_2, line_length);
 	}
