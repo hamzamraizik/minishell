@@ -23,13 +23,12 @@ typedef enum e_tokens
     TRUNC	= 4,
     IN		= 5,
     OUT		= 6,
-    ERR     = 7,
-    SEMI    = 8,
-    // SPACE   = 9,
+    VAR     = 7,
+    SEMI   = 8,
+    // ERR     = 7,
+    T_SPACE   = 9,
     WORD    = 10,
-    // NEWLINE = 11,
-    // EOF  = 12,  // 'EOF' is usually defined in stdio.h
-    NONE    = 13
+    // T_NEWLINE = 11,
 }       t_tokenz;
 
 typedef struct s_list
@@ -51,5 +50,7 @@ size_t	ft_strlen(const char *str);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	**ft_new_split(const char *s, char c, size_t len);
+void	tokenizing(t_list **head, char **line);
+char    *add_delimetre(char *line);
 
 #endif // MINISHELL_H
