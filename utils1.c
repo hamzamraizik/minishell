@@ -51,3 +51,15 @@ int	check_special(char c)
 	else
 		return (0);
 }
+int	check_quotes(int is_quotes, char c)
+{
+	if (is_quotes == 0 && c == '\'')
+			is_quotes = 1;
+	else if (is_quotes == 0 && c == '\"')
+		is_quotes = 2;
+	else if (is_quotes == 1 && c == '\'')
+		is_quotes = 0;
+	else if (is_quotes == 2 && c == '\"')
+		is_quotes = 0;
+	return(is_quotes);
+}

@@ -1,5 +1,51 @@
 #include "minishell.h"
 
+int check_multi_pipes(char *line)
+{
+	int	i;
+
+	i = 0;
+	while(line[i])
+	{
+		if ((line[i] == '|' && line[i + 1] == '|' && line[i+2] == '|') ||
+				(line[i] == '|' && line[i + 1] == ' ' && line[i + 2] == '|'))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int in_out_check(char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if ((line[i] == '<' && line[i + 1] != '<' && check_special(line[i + 1]))
+			|| (line[i] == '<' && (line[i + 1] == '<' || line[i + 1] == ' ') && line[i + 2] == '<'))
+			return (1);
+		if ((line[i] == '>' && line[i + 1] != '>' && check_special(line[i + 1]))
+			|| (line[i] == '>' && (line[i + 1] == '>' || line[i + 1] == ' ')
+				 && line[i + 2] == '>'))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	first_syntax_check(char *line)
+{
+	if (count_char(line, '\"') % 2 != 0)
+		/*syntax_error("quotes not closed");*/return (1);
+	if (line && (line[0] == '|' || line[ft_strlen(line) - 1] == '|'))
+		/*syntax_error("pipe in first or end");*/return (1);
+	if (check_multi_pipes(line))
+		/*syntax_error("multi pipes");*/return (1);
+	if (in_out_check(line))
+		return (1);
+	return 0;
+}
 
 int	count_new_len(char *line, int old_len)
 {
@@ -15,50 +61,20 @@ int	count_new_len(char *line, int old_len)
 	return (old_len);
 }
 
-char *add_spaces(char *line)
-{
-	int				new_len;
-	char			*new_line;
-	unsigned char	c;
-	int				i;
-	int				j;
-
-	i = j = 0;
-	new_len = count_new_len(line, ft_strlen(line));
-	new_line = (char *)malloc(sizeof(char) * (new_len + 1));
-	while (line[i])
-	{
-		if (line[i] && check_special(line[i]))
-		{
-			c = line[i];
-			new_line[j] = ' ';
-			while (line[i] && line[i] == c)
-				new_line[++j] = line[i++];
-			new_line[++j] = ' ';
-			++j;
-		}
-		else
-			new_line[j++] = line[i++];
-	}
-	new_line[j] = '\0';
-	return (free(line), new_line);
-}
-
 char	*parse_line(char *line, int length)
 {
 	char **new_line;
 	t_list	*head;
 
 	head = NULL;
-	length = ft_strlen(line);
 	line = add_delimetre(line);
 	new_line = ft_new_split(line, '\0', length);
 	tokenizing(&head, new_line);
-	while(head != NULL)
-	{
-		printf("%s __________>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
-		head = head->next;
-	}
+	// while(head != NULL)
+	// {
+	// 	printf("%s __________>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
+	// 	head = head->next;
+	// }
 	// check_validity(head);
 	return (line);
 }
@@ -76,14 +92,13 @@ int main(int argc, char **argv, char **envp)
 	{
 		line = readline(GRN"write a prompt: ");
 		if (check_if_empty(line))
-		{
-			free(line);
 			continue ;
-		}
-		// handle syntax error cases.
 		add_history(line);
+		// line_2 = remove_char(line, '\"');
+		if (first_syntax_check(line))
+			continue ;
 		line_2 = add_spaces(line);
-		// printf("line_2: %s\n", line_2);
+		printf("line_2: %s\n", line_2);
 		line_length = ft_strlen(line_2);
 		line_2 = parse_line(line_2, line_length);
 	}
