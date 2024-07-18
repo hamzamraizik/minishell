@@ -9,16 +9,19 @@ void	tokenizing(t_list **head, char **line)
 	{
 		if (strncmp(line[i], "|", 1) == 0)
 			list_add_back(head, creat_node(line[i], PIPE));
+		else if (strncmp(line[i],"<<", 2) == 0)
+			list_add_back(head, creat_node(line[i], HEREDOC));
 		else if (strncmp(line[i],"<", 1) == 0)
 			list_add_back(head, creat_node(line[i], IN));
+		else if (strncmp(line[i],">>", 2) == 0)
+			list_add_back(head, creat_node(line[i], APPEND));
 		else if (strncmp(line[i],">", 1) == 0)
 			list_add_back(head, creat_node(line[i], OUT));
-		else if (strncmp(line[i],";", 1) == 0)
-			list_add_back(head, creat_node(line[i], SEMI));
-		else if (strncmp(line[i]," ", 1) == 0)
-			list_add_back(head, creat_node(line[i], T_SPACE));
 		else
+		{
+			// if (is_word_with_q(line[i]))
 			list_add_back(head, creat_node(line[i], WORD));
+		}
 		i++;
 	}
 }

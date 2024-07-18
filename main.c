@@ -36,7 +36,13 @@ int in_out_check(char *line)
 
 int	first_syntax_check(char *line)
 {
-	if (count_char(line, '\"') % 2 != 0)
+	int	is_quotes;
+	int	i;
+
+	is_quotes = i = 0;
+	while (line[i])
+		is_quotes = check_quotes(is_quotes, line[i++]);
+	if (is_quotes == 1 || is_quotes == 2)
 		/*syntax_error("quotes not closed");*/return (1);
 	if (line && (line[0] == '|' || line[ft_strlen(line) - 1] == '|'))
 		/*syntax_error("pipe in first or end");*/return (1);
@@ -70,11 +76,11 @@ char	*parse_line(char *line, int length)
 	line = add_delimetre(line);
 	new_line = ft_new_split(line, '\0', length);
 	tokenizing(&head, new_line);
-	// while(head != NULL)
-	// {
-	// 	printf("%s __________>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
-	// 	head = head->next;
-	// }
+	while(head != NULL)
+	{
+		printf("%s __________>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
+		head = head->next;
+	}
 	// check_validity(head);
 	return (line);
 }

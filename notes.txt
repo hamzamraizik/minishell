@@ -1,0 +1,4 @@
+
+// check heredoc and append symbol in tokenizing
+
+//in first syntax check , chack the quotes correctly.

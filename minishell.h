@@ -25,11 +25,10 @@ typedef enum e_tokens
     IN		= 5,
     OUT		= 6,
     VAR     = 7,
-    SEMI   = 8,
-    // ERR     = 7,
+    D_QUOTES = 8,
     T_SPACE   = 9,
     WORD    = 10,
-    // T_NEWLINE = 11,
+    S_QUOTES = 11,
 }       t_tokenz;
 
 typedef struct s_list

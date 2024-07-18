@@ -21,9 +21,12 @@ char *add_spaces(char *line)
 			new_line[j] = ' ';
 			while (line[i] && line[i] == c)
 				new_line[++j] = line[i++];
-			new_line[++j] = ' ';
+            if (c != '$')
+			    new_line[++j] = ' ';
 			++j;
 		}
+        // check $ cases alone.
+        // if it then add space just before it
 		else
 			new_line[j++] = line[i++];
 	}
