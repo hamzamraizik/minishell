@@ -84,3 +84,15 @@ int syntax_error(t_list *head)
 	}
 	return (0);
 }
+
+void	*lstclear(t_list *tmp)
+{
+	t_list *tmp2;
+	while (tmp)
+	{
+		tmp2 = tmp;
+		tmp = tmp->next;
+		free(tmp2);
+	}
+	return (NULL);
+}

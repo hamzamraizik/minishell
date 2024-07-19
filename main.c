@@ -102,7 +102,7 @@ int main(int argc, char **argv, char **envp)
 		parse_line(new_line, &head, ft_strlen(new_line));
 		if (syntax_error(head) == 1)
 		{
-			// free_list(head);
+			lstclear(head);
 			continue;
 		}
 		while(head != NULL)

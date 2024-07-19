@@ -58,6 +58,7 @@ int     syntax_error(t_list *head);
 //_________________________linked list functions
 void	*creat_node(char *content, int type);
 void	list_add_back(t_list **head, t_list *new);
+void    *lstclear(t_list *tmp);
 //___________________________check functions
 int		check_if_empty(char *line);
 int     check_special(char c);
