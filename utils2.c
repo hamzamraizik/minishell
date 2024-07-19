@@ -21,17 +21,13 @@ char *add_spaces(char *line)
 			new_line[j] = ' ';
 			while (line[i] && line[i] == c)
 				new_line[++j] = line[i++];
-            if (c != '$')
-			    new_line[++j] = ' ';
+            (c != '$') && (new_line[++j] = ' ');
 			++j;
 		}
-        // check $ cases alone.
-        // if it then add space just before it
 		else
 			new_line[j++] = line[i++];
 	}
-	new_line[j] = '\0';
-	return (free(line), new_line);
+	return (new_line[j] = '\0', free(line), new_line);
 }
 
 int count_char(char *line, char c)
