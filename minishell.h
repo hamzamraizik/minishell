@@ -40,7 +40,6 @@ typedef struct s_list
 }   t_list;
 
 //__________________________Libft functions
-char	**ft_split(char const *s, char c);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s1, int n);
 char	*ft_strjoin(char const *s1, char const *s2);
@@ -55,6 +54,7 @@ char    *add_spaces(char *line);
 int     count_char(char *line, char c);
 int     count_new_len(char *line, int old_len);
 char	*remove_char(char *line, char c);
+int     syntax_error(t_list *head);
 //_________________________linked list functions
 void	*creat_node(char *content, int type);
 void	list_add_back(t_list **head, t_list *new);
@@ -62,5 +62,6 @@ void	list_add_back(t_list **head, t_list *new);
 int		check_if_empty(char *line);
 int     check_special(char c);
 int     check_quotes(int is_quotes, char c);
+void    s_with_d_Q(char *s);
 
 #endif // MINISHELL_H

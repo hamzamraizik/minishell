@@ -18,10 +18,7 @@ void	tokenizing(t_list **head, char **line)
 		else if (strncmp(line[i],">", 1) == 0)
 			list_add_back(head, creat_node(line[i], OUT));
 		else
-		{
-			// if (is_word_with_q(line[i]))
 			list_add_back(head, creat_node(line[i], WORD));
-		}
 		i++;
 	}
 }
@@ -43,7 +40,6 @@ char *add_delimetre(char *line)
 			is_quotes = 0;
 		else if (is_quotes == 2 && line[i] == '\"')
 			is_quotes = 0;
-
 		if (is_quotes == 0 && line[i] == ' ')
 		{
 			line[i] = '\0';

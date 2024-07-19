@@ -67,45 +67,48 @@ int	count_new_len(char *line, int old_len)
 	return (old_len);
 }
 
-char	*parse_line(char *line, int length)
+void	*parse_line(char *line, t_list	**head, int length)
 {
 	char **new_line;
-	t_list	*head;
 
-	head = NULL;
+	*head = NULL;
 	line = add_delimetre(line);
 	new_line = ft_new_split(line, '\0', length);
-	tokenizing(&head, new_line);
-	while(head != NULL)
-	{
-		printf("%s __________>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
-		head = head->next;
-	}
-	// check_validity(head);
-	return (line);
+	tokenizing(head, new_line);
+	// free_line(new_line);
+	return (NULL);
 }
 
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
-	char    *line_2;
-	int		line_length;
+	char    *new_line;
+	t_list	*head;
 
 	(void)argc;
 	(void)argv;
 	(void)envp;
+	head = NULL;
 	while (1)
 	{
-		line = readline(GRN"write a prompt: ");
+		line = readline(RED"write a prompt: ");
 		if (check_if_empty(line))
 			continue ;
 		add_history(line);
-		// line_2 = remove_char(line, '\"');
 		if (first_syntax_check(line))
 			continue ;
-		line_2 = add_spaces(line);
-		printf("line_2: %s\n", line_2);
-		line_length = ft_strlen(line_2);
-		line_2 = parse_line(line_2, line_length);
+		new_line = add_spaces(line);
+		// printf("line_2: %s\n", new_line);
+		parse_line(new_line, &head, ft_strlen(new_line));
+		if (syntax_error(head) == 1)
+		{
+			// free_list(head);
+			continue;
+		}
+		while(head != NULL)
+		{
+			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
+			head = head->next;
+		}
 	}
 }

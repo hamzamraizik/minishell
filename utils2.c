@@ -21,7 +21,7 @@ char *add_spaces(char *line)
 			new_line[j] = ' ';
 			while (line[i] && line[i] == c)
 				new_line[++j] = line[i++];
-            (c != '$') && (new_line[++j] = ' ');
+			(c != '$') && (new_line[++j] = ' ');
 			++j;
 		}
 		else
@@ -63,4 +63,24 @@ char    *remove_char(char *line, char c)
 			str[j++] = line[i++];
 	}
 	return (free(line), str);
+}
+
+int syntax_error(t_list *head)
+{
+	t_list	*tmp;
+
+	tmp = head;
+	while (tmp)
+	{
+		if (tmp->next && tmp->type == HEREDOC && tmp->next->type != WORD)
+			return (1);
+		else if (tmp->next && tmp->type == APPEND && tmp->next->type != WORD)
+			return (1);
+		else if (tmp->next && tmp->type == IN && tmp->next->type != WORD)
+			return (1);
+		else if (tmp->next && tmp->type == OUT && tmp->next->type != WORD)
+			return (1);
+		tmp = tmp->next;
+	}
+	return (0);
 }

@@ -2,3 +2,13 @@
 // check heredoc and append symbol in tokenizing
 
 //in first syntax check , chack the quotes correctly.
+
+
+{<, >, >>, <<} every symbol in this list must be a word after it.
+
+
+test this in IMAC:
+    write a prompt: ls | hello >> ls | ls
+
+malloc(): invalid size (unsorted)
+Aborted (core dumped)
