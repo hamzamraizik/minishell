@@ -21,7 +21,7 @@ char *add_spaces(char *line)
 			new_line[j] = ' ';
 			while (line[i] && line[i] == c)
 				new_line[++j] = line[i++];
-			(c != '$') && (new_line[++j] = ' ');
+			new_line[++j] = ' ';
 			++j;
 		}
 		else

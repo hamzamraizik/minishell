@@ -105,6 +105,7 @@ int main(int argc, char **argv, char **envp)
 			lstclear(head);
 			continue;
 		}
+		expanding(&head);
 		while(head != NULL)
 		{
 			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");

@@ -46,7 +46,7 @@ void    list_add_back(t_list **head, t_list *new)
 
 int	check_special(char c)
 {
-	if (c == '|' || c == '<' || c == '>' || c == '$')
+	if (c == '|' || c == '<' || c == '>')
 		return (1);
 	else
 		return (0);

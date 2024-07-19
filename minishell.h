@@ -64,5 +64,7 @@ int		check_if_empty(char *line);
 int     check_special(char c);
 int     check_quotes(int is_quotes, char c);
 void    s_with_d_Q(char *s);
+// expanding functions
+void    expanding(t_list **head);
 
 #endif // MINISHELL_H

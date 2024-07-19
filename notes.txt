@@ -6,6 +6,7 @@
 
 {<, >, >>, <<} every symbol in this list must be a word after it.
 
+$? should be in deff tokenizing
 
 test this in IMAC:
     write a prompt: ls | hello >> ls | ls
