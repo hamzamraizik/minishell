@@ -39,6 +39,13 @@ typedef struct s_list
 	struct	s_list	*prev;
 }   t_list;
 
+typedef struct s_env
+{
+    char    *line;
+    char    *tab;
+    char    *key;
+    char    *value;
+}           t_env;
 //__________________________Libft functions
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s1, int n);

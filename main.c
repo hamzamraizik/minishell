@@ -92,24 +92,22 @@ int main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		line = readline(RED"write a prompt: ");
-		if (check_if_empty(line))
-			continue ;
 		add_history(line);
-		if (first_syntax_check(line))
+		if (check_if_empty(line) || first_syntax_check(line))
 			continue ;
 		new_line = add_spaces(line);
-		// printf("line_2: %s\n", new_line);
 		parse_line(new_line, &head, ft_strlen(new_line));
-		if (syntax_error(head) == 1)
-		{
-			lstclear(head);
-			continue;
-		}
+		if (syntax_error(head) == 1 && !lstclear(head))
+			continue ;
 		expanding(&head);
 		while(head != NULL)
 		{
 			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
 			head = head->next;
 		}
+		lstclear(head);
+		// free(line);
+		free(new_line);
+		// split_env(envp);
 	}
 }
