@@ -36,8 +36,8 @@ int in_out_check(char *line)
 
 int	first_syntax_check(char *line)
 {
-	int	is_quotes;
-	int	i;
+	int		is_quotes;
+	int		i;
 
 	is_quotes = i = 0;
 	while (line[i])

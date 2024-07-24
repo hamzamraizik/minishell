@@ -11,35 +11,105 @@ void expand(char **s)
 	else
 		return ;
 	free(tmp);
+	return ;
 	// exit(1);
+}
+
+char	*no_q_var(char **word, int i, int is_q)
+{
+	int		start;
+	char	*result;
+	char	*s;
+
+	start = 0;
+	s = strdup("");
+	char space[2] = {' ', '\0'};
+	result = strdup("");
+	start = ++i;
+	is_q = check_quotes(is_q, (*word)[i]);
+	while (!is_q && (*word)[i + 1] != '\0' && (*word)[i + 1] != ' ' && (*word)[i + 1] != '$')
+	{
+		++i;
+		is_q = check_quotes(is_q, (*word)[i + 1]);
+	}
+	s = strndup((*word) + start, i - start + 1);
+	expand(&s);
+	result = ft_strjoin(result, s);
+	result = ft_strjoin(result, space);
+	return (result);
+}
+
+char *var_with_d_q(char **word, int i, int is_q)
+{
+	int		start;
+	char	*result;
+	char	*s;
+
+	start = 0;
+	s = strdup("");
+	char space[2] = {' ', '\0'};
+	result = strdup("");
+	++i; // to skip the double quotes
+	start = ++i; // skip $ symbol
+	while (is_q == 2 && (*word)[i + 1] && (*word)[i + 1] != ' ' && (*word)[i + 1] != '$' && (*word)[i + 1] != '\"')
+	{
+		is_q = check_quotes(is_q, (*word)[i]);
+		i++;
+	}
+	s = strndup((*word) + start, i - start + 1);
+	expand(&s);
+	result = ft_strjoin(result, s);
+	result = ft_strjoin(result, space);
+	return (result);
+}
+
+char	*not_var(char **word, int i, int is_q, char *result)
+{
+	int		start;
+	char	*s;
+
+	start = 0;
+	s = strdup("");
+	char space[2] = {' ', '\0'};
+	result = strdup("");
+	++i; // to skip the single quotes
+	is_q = check_quotes(is_q, (*word)[i]);
+	while (is_q == 1 && (*word)[i + 1] && (*word)[i + 1] == '\'')
+	{
+		is_q = check_quotes(is_q, (*word)[i]);
+		i++;
+	}
+	s = strndup((*word) + start, i - start + 1);
+	// expand(&s);
+	result = ft_strjoin(result, s);
+	result = ft_strjoin(result, space);
+	return (result);
 }
 
 char	*var_expand(char **word)
 {
 	int		is_quotes;
-	char	*s;
 	char	*result;
 	int		i;
 	int		start;
 
 	i = is_quotes = start = 0;
-	s = strdup("");
-	char space[2] = {' ', '\0'};
-	result = strdup("");
+	
 	if (!word || !*word)
 		return NULL;
+		result = strdup("");
 	while ((*word)[i])
 	{
 		is_quotes = check_quotes(is_quotes, (*word)[i]);
 		if (is_quotes == 0 && (*word)[i] && (*word)[i] == '$')
+			result = ft_strjoin(result, no_q_var(word, i, is_quotes));
+		else if (is_quotes == 2 && (*word)[i] && (*word)[i + 1] && (*word)[i + 1] == '$')
+			result = ft_strjoin(result, var_with_d_q(word, i, is_quotes));
+		else if (is_quotes == 1 && (*word)[i] && (*word)[i + 1] && (*word)[i + 1] == '$')
 		{
-			start = ++i;
-			while (!is_quotes && (*word)[i + 1] != '\0' && (*word)[i + 1] != ' ' && (*word)[i + 1] != '$')
+			result = ft_strjoin(result, not_var(word, i, is_quotes, result));
+			while ( (*word)[i] && (*word)[i + 1] && (*word)[i + 1] == '\'')
 				i++;
-			s = strndup((*word) + start, i - start + 1);
-			expand(&s);
-			result = ft_strjoin(result, s);
-			result = ft_strjoin(result, space);
 		}
 		i++;
 	}
