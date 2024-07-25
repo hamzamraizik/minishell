@@ -2,14 +2,17 @@
 void expand(char **s)
 {
 	char *tmp = *s;
-	if (strcmp(*s, "HOME") == 0)
+	if (*s && strcmp(*s, "HOME") == 0)
 	{
 		*s = strdup("/home/mizoo");
 	}
-	else if (strcmp(*s, "USER") == 0)
+	else if (*s && strcmp(*s, "USER") == 0)
 		*s = strdup("mizoo");
 	else
+	{
+		*s = NULL;
 		return ;
+	}
 	free(tmp);
 	return ;
 	// exit(1);
@@ -22,8 +25,9 @@ char	*no_q_var(char **word, int i, int is_q)
 	char	*s;
 
 	start = 0;
-	s = strdup("");
+	s = NULL;
 	char space[2] = {' ', '\0'};
+
 	result = strdup("");
 	start = ++i;
 	is_q = check_quotes(is_q, (*word)[i]);
@@ -34,8 +38,16 @@ char	*no_q_var(char **word, int i, int is_q)
 	}
 	s = strndup((*word) + start, i - start + 1);
 	expand(&s);
-	result = ft_strjoin(result, s);
-	result = ft_strjoin(result, space);
+	if (s)
+	{
+		result = ft_strjoin(result, s);
+		result = ft_strjoin(result, space);
+	}
+	else
+	{
+		start -= 1;
+		result = strndup((*word) + start, i - start + 1);
+	}
 	return (result);
 }
 
@@ -91,13 +103,23 @@ char	*var_expand(char **word)
 	char	*result;
 	int		i;
 	int		start;
+	int		index;
 
-	i = is_quotes = start = 0;
+	i = index = is_quotes = start = 0;
 	if (!word || !*word)
 		return NULL;
 	result = strdup("");
+	is_quotes = check_quotes(is_quotes, (*word)[i]);
 	while ((*word)[i])
 	{
+		index = 0;
+		if (is_quotes)
+		{
+			while ((*word)[index] && (*word)[index] != ' ' && (*word)[index] != '$')
+				index++;
+			result = strndup(*word, index);
+		}
+		i += index;
 		is_quotes = check_quotes(is_quotes, (*word)[i]);
 		if (is_quotes == 0 && (*word)[i] && (*word)[i] == '$' && (*word)[i + 1])
 			result = ft_strjoin(result, no_q_var(word, i, is_quotes));
@@ -111,18 +133,16 @@ char	*var_expand(char **word)
 		}
 		i++;
 	}
-		if (result[0] == '\0')
-			result = *word;
+	if (result[0] == '\0')
+		result = *word;
 	return (result);
 }
 
 void	expanding(t_list **head)
 {
-	// int		i;
 	t_list	*tmp;
 	char	*tmp2;
 
-	// i = 0;
 	if (head == NULL || !*head)
 		return ;
 	tmp = *head;
