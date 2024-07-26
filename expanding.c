@@ -1,4 +1,6 @@
-# include "minishell.h"
+#include "minishell.h"
+
+// Dummy expand function for testing
 void expand(char **s)
 {
 	char *tmp = *s;
@@ -7,151 +9,165 @@ void expand(char **s)
 		*s = strdup("/home/mizoo");
 	}
 	else if (*s && strcmp(*s, "USER") == 0)
+	{
 		*s = strdup("mizoo");
+	}
 	else
 	{
 		*s = NULL;
-		return ;
+		return;
 	}
 	free(tmp);
-	return ;
-	// exit(1);
 }
 
-char	*no_q_var(char **word, int i, int is_q)
+char *expand_variable(const char *str, int *index)
 {
-	int		start;
-	char	*result;
-	char	*s;
+	char *result = NULL;
+	char var_name[256];
+	int var_len = 0;
 
-	start = 0;
-	s = NULL;
-	char space[2] = {' ', '\0'};
+	while (str[*index] && (isalnum(str[*index]) || str[*index] == '_'))
+	{
+		var_name[var_len++] = str[*index];
+		(*index)++;
+	}
+	var_name[var_len] = '\0';
+	(*index)--;
 
-	result = strdup("");
-	start = ++i;
-	is_q = check_quotes(is_q, (*word)[i]);
-	while (!is_q && (*word)[i + 1] != '\0' && (*word)[i + 1] != ' ' && (*word)[i + 1] != '$')
-	{
-		++i;
-		is_q = check_quotes(is_q, (*word)[i + 1]);
-	}
-	s = strndup((*word) + start, i - start + 1);
-	expand(&s);
-	if (s)
-	{
-		result = ft_strjoin(result, s);
-		result = ft_strjoin(result, space);
-	}
-	else
-	{
-		start -= 1;
-		result = strndup((*word) + start, i - start + 1);
-	}
-	return (result);
+	result = is_var(ft_envp, var_name);
+	// if (strcmp(var_name, "HOME") == 0)
+	// 	result = strdup("/home/mizoo");
+	// else if (strcmp(var_name, "USER") == 0)
+	// 	result = strdup("mizoo");
+	// else
+	// 	result = strdup(""); // Handle undefined variables as empty string
+
+	return result;
 }
 
-char *var_with_d_q(char **word, int i, int is_q)
+char *handle_double_quotes(const char *str, int *index)
 {
-	int		start;
-	char	*result;
-	char	*s;
+	char *result = strdup("");
+	char *tmp;
+	int start = *index;
 
-	start = 0;
-	s = strdup("");
-	char space[2] = {' ', '\0'};
-	result = strdup("");
-	++i; // to skip the double quotes
-	start = ++i; // skip $ symbol
-	while (is_q == 2 && (*word)[i + 1] && (*word)[i + 1] != ' ' && (*word)[i + 1] != '$' && (*word)[i + 1] != '\"')
+	(*index)++; // Skip the initial double quote
+
+	while (str[*index] && str[*index] != '"')
 	{
-		is_q = check_quotes(is_q, (*word)[i]);
-		i++;
-	}
-	s = strndup((*word) + start, i - start + 1);
-	expand(&s);
-	result = ft_strjoin(result, s);
-	result = ft_strjoin(result, space);
-	return (result);
-}
-
-char	*not_var(char **word, int i, int is_q, char *result)
-{
-	int		start;
-	char	*s;
-
-	start = 0;
-	s = strdup("");
-	char space[2] = {' ', '\0'};
-	result = strdup("");
-	start = ++i;// to skip the single quotes
-	while (is_q == 1 && (*word)[i + 1] && (*word)[i + 1] != '\0' && (*word)[i + 1] != '\'')
-	{
-		is_q = check_quotes(is_q, (*word)[i]);
-		i++;
-	}
-	s = strndup((*word) + start, i - start + 1);
-	// expand(&s);
-	result = ft_strjoin(result, s);
-	result = ft_strjoin(result, space);
-	return (result);
-}
-
-char	*var_expand(char **word)
-{
-	int		is_quotes;
-	char	*result;
-	int		i;
-	int		start;
-	int		index;
-
-	i = index = is_quotes = start = 0;
-	if (!word || !*word)
-		return NULL;
-	result = strdup("");
-	is_quotes = check_quotes(is_quotes, (*word)[i]);
-	while ((*word)[i])
-	{
-		index = 0;
-		if (is_quotes)
+		if (str[*index] == '$')
 		{
-			while ((*word)[index] && (*word)[index] != ' ' && (*word)[index] != '$')
-				index++;
-			result = strndup(*word, index);
+			// Expand variable inside double quotes
+			tmp = strndup(str + start, *index - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+			(*index)++;
+			tmp = expand_variable(str, index);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
+			start = *index + 1;
 		}
-		i += index;
-		is_quotes = check_quotes(is_quotes, (*word)[i]);
-		if (is_quotes == 0 && (*word)[i] && (*word)[i] == '$' && (*word)[i + 1])
-			result = ft_strjoin(result, no_q_var(word, i, is_quotes));
-		else if (is_quotes == 2 && (*word)[i + 1] && (*word)[i + 1] == '$' && (*word)[i + 2] && (*word)[i + 2] != '\"')
-			result = ft_strjoin(result, var_with_d_q(word, i, is_quotes));
-		else if (is_quotes == 1 && (*word)[i + 1] && (*word)[i + 1] == '$' && (*word)[i + 2] && (*word)[i + 2] != '\'')
+		(*index)++;
+	}
+
+	tmp = strndup(str + start, *index - start);
+	result = ft_strjoin(result, tmp);
+	free(tmp);
+
+	(*index)++; // Skip the closing double quote
+
+	return result;
+}
+
+char *handle_single_quotes(const char *str, int *index)
+{
+	char *result = strdup("");
+	int start = *index;
+
+	(*index)++; // Skip the initial single quote
+
+	while (str[*index] && str[*index] != '\'')
+	{
+		(*index)++;
+	}
+
+	result = strndup(str + start + 1, *index - start - 1);
+
+	(*index)++; // Skip the closing single quote
+
+	return result;
+}
+
+char *var_expand(const char *word)
+{
+	char *result = strdup("");
+	char *tmp;
+	int i = 0, start = 0;
+
+	while (word[i])
+	{
+		if (word[i] == '\'')
 		{
-			result = ft_strjoin(result, not_var(word, i, is_quotes, result));
-			while ( (*word)[i] && (*word)[i + 1] && (*word)[i + 1] != '\'')
-				i++;
+			tmp = strndup(word + start + 1, i - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
+			tmp = handle_single_quotes(word, &i);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
+			start = i;
+		}
+		else if (word[i] == '"')
+		{
+			tmp = strndup(word + start, i - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
+			tmp = handle_double_quotes(word, &i);
+			result = ft_strjoin(result, tmp + 1);
+			free(tmp);
+
+			start = i;
+		}
+		else if (word[i] == '$')
+		{
+			tmp = strndup(word + start, i - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
+			i++;
+			tmp = expand_variable(word, &i);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
+			start = i + 1;
 		}
 		i++;
 	}
-	if (result[0] == '\0')
-		result = *word;
-	return (result);
+
+	tmp = strndup(word + start, i - start);
+	result = ft_strjoin(result, tmp);
+	free(tmp);
+
+	return result;
 }
 
-void	expanding(t_list **head)
+void expanding(t_list **head)
 {
 	t_list	*tmp;
 	char	*tmp2;
 
 	if (head == NULL || !*head)
-		return ;
+		return;
 	tmp = *head;
 	while (tmp)
 	{
 		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$'))
 		{
 			tmp2 = tmp->content;
-			tmp->content = var_expand(&tmp->content);
+			tmp->content = var_expand(tmp->content);
 			free(tmp2);
 		}
 		tmp = tmp->next;
