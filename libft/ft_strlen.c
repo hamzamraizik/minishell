@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/07 19:04:48 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/09 21:05:11 by mizoo            ###   ########.fr       */
+/*   Created: 2023/11/06 22:58:54 by hmraizik          #+#    #+#             */
+/*   Updated: 2024/07/26 17:22:38 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-char	*ft_strdup(const char *s1, int n)
+size_t	ft_strlen(const char *str)
 {
-	size_t	len;
-	char	*s2;
+	int	i;
+	int	count;
 
-	len = n + 1;
-	s2 = malloc(len);
-	if (s1 == NULL)
-		return (NULL);
-	if (s2 != NULL)
+	i = 0;
+	count = 0;
+	while (str[i] != '\0')
 	{
-		ft_memcpy(s2, s1, len - 1);
-		s2[len - 1] = '\0';
+		count += 1;
+		i++;
 	}
-	return (s2);
+	return (count);
 }

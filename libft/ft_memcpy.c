@@ -1,29 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/04 15:20:43 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/19 19:26:45 by hmraizik         ###   ########.fr       */
+/*   Created: 2023/11/04 15:19:46 by hmraizik          #+#    #+#             */
+/*   Updated: 2024/07/26 17:22:24 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-char	*ft_strchr(const char *s, int c)
+void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	int		i;
-	char	*str;
+	size_t	i;
 
 	i = 0;
-	str = (char *)s;
-	while (str[i] != (char )c)
+	if (!src && !dest)
+		return (NULL);
+	if (dest != src)
 	{
-		if (str[i] == '\0')
-			return (NULL);
-		i++;
+		while (i < n)
+		{
+			((char *)dest)[i] = ((char *)src)[i];
+			i++;
+		}
 	}
-	return (str + i);
+	return (dest);
 }

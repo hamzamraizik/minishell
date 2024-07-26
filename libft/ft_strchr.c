@@ -1,28 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 22:58:54 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/08 17:52:07 by hmraizik         ###   ########.fr       */
+/*   Created: 2023/11/04 15:20:43 by hmraizik          #+#    #+#             */
+/*   Updated: 2024/07/26 17:22:28 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
-size_t	ft_strlen(const char *str)
+char	*ft_strchr(const char *s, int c)
 {
-	int	i;
-	int	count;
+	int		i;
+	char	*str;
 
 	i = 0;
-	count = 0;
-	while (str[i] != '\0')
+	str = (char *)s;
+	while (str[i] != (char )c)
 	{
-		count += 1;
+		if (str[i] == '\0')
+			return (NULL);
 		i++;
 	}
-	return (count);
+	return (str + i);
 }

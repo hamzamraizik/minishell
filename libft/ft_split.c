@@ -6,11 +6,11 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 13:44:52 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/26 14:47:36 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/07/26 17:22:26 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static int	count_word(const char *s, char c)
 {

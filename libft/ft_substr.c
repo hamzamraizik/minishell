@@ -6,11 +6,11 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 19:40:12 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/13 22:44:08 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/07/26 17:22:40 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
