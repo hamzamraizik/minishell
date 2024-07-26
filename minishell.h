@@ -16,19 +16,21 @@
 # define RED  "\x1B[31m"
 # define GRN  "\x1B[32m"
 
+extern char **ft_envp;
+
 typedef enum e_tokens
 {
 	PIPE	= 1,
-    HEREDOC	= 2,
-    APPEND	= 3,
-    TRUNC	= 4,
-    IN		= 5,
-    OUT		= 6,
-    VAR     = 7,
-    D_QUOTES = 8,
-    T_SPACE   = 9,
-    WORD    = 10,
-    S_QUOTES = 11,
+	HEREDOC	= 2,
+	APPEND	= 3,
+	TRUNC	= 4,
+	IN		= 5,
+	OUT		= 6,
+	VAR     = 7,
+	D_QUOTES = 8,
+	T_SPACE   = 9,
+	WORD    = 10,
+	S_QUOTES = 11,
 }       t_tokenz;
 
 typedef struct s_list
@@ -41,13 +43,14 @@ typedef struct s_list
 
 typedef struct s_env
 {
-    char    *line;
-    char    *tab;
-    char    *key;
-    char    *value;
+	char    *line;
+	char    *tab;
+	char    *key;
+	char    *value;
 }           t_env;
 //__________________________Libft functions
 char	*ft_strchr(const char *s, int c);
+char	**ft_split(char const *s, char c);
 char	*ft_strdup(const char *s1, int n);
 char	*ft_strjoin(char const *s1, char const *s2);
 size_t	ft_strlen(const char *str);
@@ -73,5 +76,6 @@ int     check_quotes(int is_quotes, char c);
 void    s_with_d_Q(char *s);
 // expanding functions
 void    expanding(t_list **head);
+char    *is_var(char **env, char *var);
 
 #endif // MINISHELL_H

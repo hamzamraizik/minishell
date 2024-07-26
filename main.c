@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+char **ft_envp;
 int check_multi_pipes(char *line)
 {
 	int	i;
@@ -87,7 +88,8 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	(void)envp;
+	// (void)envp;
+	ft_envp = envp;
 	head = NULL;
 	while (1)
 	{
