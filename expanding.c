@@ -28,6 +28,36 @@ char *expand_variable(const char *str, int *index)
 	return (result);
 }
 
+int	special_vars(char **result, const char **str, int *start, int *index)
+{
+	char	*tmp;
+	int		flag;
+
+	flag = 0;
+	if ((*str)[*index] == '$' && (*str)[*index + 1] == '0')
+	{
+		flag = 1;
+		tmp = strndup((*str) + (*start), *index - (*start));
+		*result = ft_strjoin(*result, tmp);
+		free(tmp);
+		*result = ft_strjoin(*result, "bash");
+		(*index)++; //skip the symbol '$'
+		(*start) = (*index) + 1; // ++1 for start after '0'
+	}
+	if ((*str)[*index] == '$' && (*str)[*index + 1] && isnum((*str)[*index + 1]))
+	{
+		flag = 2;
+		tmp = strndup((*str) + (*start), *index - (*start));
+		*result = ft_strjoin(*result, tmp);
+		free(tmp);
+		(*index)++;
+		(*start) = (*index) + 1;
+	}
+	else
+		return(flag);
+	return (flag);
+}
+
 char *handle_double_quotes(const char *str, int *index)
 {
 	char *result = strdup("");
@@ -38,16 +68,8 @@ char *handle_double_quotes(const char *str, int *index)
 
 	while (str[*index] && str[*index] != '"')
 	{
-		if (str[*index] == '$' && str[*index + 1] == '0')
-		{
-			tmp = strndup(str + start, *index - start);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			result = ft_strjoin(result, "bash");
-			(*index)++; //skip the symbol '$'
-			start = (*index) + 1; // ++1 for start after '0'
+		if (special_vars(&result, &str, &start, index))
 			continue;
-		}
 		if (str[*index] == '$' && str[*index + 1] && !isnum(str[*index + 1]))
 		{
 			tmp = strndup(str + start, *index - start);
@@ -60,14 +82,6 @@ char *handle_double_quotes(const char *str, int *index)
 			free(tmp);
 
 			start = *index + 1; // +1 for start being equal to index after incremented in the loop
-		}
-		if (str[*index] == '$' && str[*index + 1] && ( str[*index + 1] >= '0' &&  str[*index + 1] <= '9'))
-		{
-			tmp = strndup(str + start, *index - start);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			(*index)++;
-			start = (*index) + 1;
 		}
 		(*index)++;
 	}
@@ -131,6 +145,8 @@ char *var_expand(const char *word)
 		}
 		else if (word[i] == '$')
 		{
+			if (special_vars(&result, &word, &start, &i) != 0)
+				continue;
 			tmp = strndup(word + start, i - start);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
