@@ -17,7 +17,7 @@ char	*is_var(char **env, char *var)
 		{
 			var = line[1];
 			result = strdup(var);
-			return result;
+			return (result);
 		}
 		i++;
 	}

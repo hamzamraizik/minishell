@@ -1,48 +1,31 @@
 #include "minishell.h"
 
-// Dummy expand function for testing
-void expand(char **s)
-{
-	char *tmp = *s;
-	if (*s && strcmp(*s, "HOME") == 0)
-	{
-		*s = strdup("/home/mizoo");
-	}
-	else if (*s && strcmp(*s, "USER") == 0)
-	{
-		*s = strdup("mizoo");
-	}
-	else
-	{
-		*s = NULL;
-		return;
-	}
-	free(tmp);
-}
-
 char *expand_variable(const char *str, int *index)
 {
-	char *result = NULL;
-	char var_name[256];
-	int var_len = 0;
+	char	*result = NULL;
+	int		Name_length = 0;
+	int		var_len = 0;
+	char	*name;
+	int		i;
 
+	i = *index;
+	while (str[i] && (isalnum(str[i]) || str[i] == '_'))
+	{
+		Name_length++;
+		i++;
+	}
+	name = malloc(Name_length + 1);
 	while (str[*index] && (isalnum(str[*index]) || str[*index] == '_'))
 	{
-		var_name[var_len++] = str[*index];
+		name[var_len] = str[*index];
+		var_len++;
 		(*index)++;
 	}
-	var_name[var_len] = '\0';
-	(*index)--;
+	name[var_len] = '\0';
+	(*index)--; //because i was incremented one more, in the loop.
 
-	result = is_var(ft_envp, var_name);
-	// if (strcmp(var_name, "HOME") == 0)
-	// 	result = strdup("/home/mizoo");
-	// else if (strcmp(var_name, "USER") == 0)
-	// 	result = strdup("mizoo");
-	// else
-	// 	result = strdup(""); // Handle undefined variables as empty string
-
-	return result;
+	result = is_var(ft_envp, name);
+	return (result);
 }
 
 char *handle_double_quotes(const char *str, int *index)
@@ -51,11 +34,11 @@ char *handle_double_quotes(const char *str, int *index)
 	char *tmp;
 	int start = *index;
 
-	(*index)++; // Skip the initial double quote
+	(*index)++; // for the first double quote
 
 	while (str[*index] && str[*index] != '"')
 	{
-		if (str[*index] == '$')
+		if (str[*index] == '$' && str[*index + 1])
 		{
 			// Expand variable inside double quotes
 			tmp = strndup(str + start, *index - start);
@@ -66,18 +49,13 @@ char *handle_double_quotes(const char *str, int *index)
 			result = ft_strjoin(result, tmp);
 			free(tmp);
 
-			start = *index + 1;
+			start = *index + 1; // +1 for start being equal to index after incremented in the loop
 		}
 		(*index)++;
 	}
+	(*index)++; // for skip the closing double quote
 
-	tmp = strndup(str + start, *index - start);
-	result = ft_strjoin(result, tmp);
-	free(tmp);
-
-	(*index)++; // Skip the closing double quote
-
-	return result;
+	return (result);
 }
 
 char *handle_single_quotes(const char *str, int *index)
@@ -94,7 +72,7 @@ char *handle_single_quotes(const char *str, int *index)
 
 	result = strndup(str + start + 1, *index - start - 1);
 
-	(*index)++; // Skip the closing single quote
+	// (*index)++; // Skip the closing single quote
 
 	return result;
 }
@@ -103,28 +81,19 @@ char *var_expand(const char *word)
 {
 	char *result = strdup("");
 	char *tmp;
-	int i = 0, start = 0;
+	int i = 0, start = 0, is_quotes = 0;
 
 	while (word[i])
 	{
-		if (word[i] == '\'')
+		if (word[i] == '\'' &&  is_quotes != 1)
 		{
-			tmp = strndup(word + start + 1, i - start);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-
 			tmp = handle_single_quotes(word, &i);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-
-			start = i;
+			start = i+1;
 		}
 		else if (word[i] == '"')
 		{
-			tmp = strndup(word + start, i - start);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-
 			tmp = handle_double_quotes(word, &i);
 			result = ft_strjoin(result, tmp + 1);
 			free(tmp);
@@ -133,25 +102,19 @@ char *var_expand(const char *word)
 		}
 		else if (word[i] == '$')
 		{
-			tmp = strndup(word + start, i - start);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-
 			i++;
 			tmp = expand_variable(word, &i);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-
 			start = i + 1;
 		}
+		is_quotes = check_quotes(is_quotes, word[i]);
 		i++;
 	}
-
 	tmp = strndup(word + start, i - start);
 	result = ft_strjoin(result, tmp);
 	free(tmp);
-
-	return result;
+	return (result);
 }
 
 void expanding(t_list **head)
@@ -164,8 +127,9 @@ void expanding(t_list **head)
 	tmp = *head;
 	while (tmp)
 	{
-		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$'))
+		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$') && (ft_strchr(tmp->content, '$') + 1) && *(ft_strchr(tmp->content, '$') + 1)  && isalnum(*(ft_strchr(tmp->content, '$') + 1)))
 		{
+			printf("__________????\n");
 			tmp2 = tmp->content;
 			tmp->content = var_expand(tmp->content);
 			free(tmp2);

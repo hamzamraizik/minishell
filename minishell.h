@@ -9,12 +9,19 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <stdbool.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
-# define RED  "\x1B[31m"
-# define GRN  "\x1B[32m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN    "\033[36m"
+#define RESET   "\033[0m"
+#define BOLD    "\033[1m"
 
 extern char **ft_envp;
 

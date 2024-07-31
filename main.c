@@ -93,7 +93,7 @@ int main(int argc, char **argv, char **envp)
 	head = NULL;
 	while (1)
 	{
-		line = readline(RED"write a prompt: ");
+		 line = readline(GREEN BOLD "Minishell " YELLOW BOLD"-> " RESET);
 		add_history(line);
 		if (check_if_empty(line) || first_syntax_check(line))
 			continue ;
