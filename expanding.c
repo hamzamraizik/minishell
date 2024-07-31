@@ -38,23 +38,43 @@ char *handle_double_quotes(const char *str, int *index)
 
 	while (str[*index] && str[*index] != '"')
 	{
-		if (str[*index] == '$' && str[*index + 1])
+		if (str[*index] == '$' && str[*index + 1] == '0')
 		{
-			// Expand variable inside double quotes
+			tmp = strndup(str + start, *index - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+			result = ft_strjoin(result, "bash");
+			(*index)++; //skip the symbol '$'
+			start = (*index) + 1; // ++1 for start after '0'
+			continue;
+		}
+		if (str[*index] == '$' && str[*index + 1] && !isnum(str[*index + 1]))
+		{
 			tmp = strndup(str + start, *index - start);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
 			(*index)++;
+			// Expand variable inside double quotes
 			tmp = expand_variable(str, index);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
 
 			start = *index + 1; // +1 for start being equal to index after incremented in the loop
 		}
+		if (str[*index] == '$' && str[*index + 1] && ( str[*index + 1] >= '0' &&  str[*index + 1] <= '9'))
+		{
+			tmp = strndup(str + start, *index - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+			(*index)++;
+			start = (*index) + 1;
+		}
 		(*index)++;
 	}
 	(*index)++; // for skip the closing double quote
-
+	tmp = strndup(str + start, *index - start - 1);
+	result = ft_strjoin(result, tmp);
+	free(tmp);
 	return (result);
 }
 
@@ -85,8 +105,13 @@ char *var_expand(const char *word)
 
 	while (word[i])
 	{
+	
 		if (word[i] == '\'' &&  is_quotes != 1)
 		{
+			tmp = strndup(word + start, i - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
 			tmp = handle_single_quotes(word, &i);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
@@ -94,6 +119,10 @@ char *var_expand(const char *word)
 		}
 		else if (word[i] == '"')
 		{
+			tmp = strndup(word + start, i - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
+
 			tmp = handle_double_quotes(word, &i);
 			result = ft_strjoin(result, tmp + 1);
 			free(tmp);
@@ -102,6 +131,9 @@ char *var_expand(const char *word)
 		}
 		else if (word[i] == '$')
 		{
+			tmp = strndup(word + start, i - start);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
 			i++;
 			tmp = expand_variable(word, &i);
 			result = ft_strjoin(result, tmp);
@@ -127,9 +159,11 @@ void expanding(t_list **head)
 	tmp = *head;
 	while (tmp)
 	{
-		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$') && (ft_strchr(tmp->content, '$') + 1) && *(ft_strchr(tmp->content, '$') + 1)  && isalnum(*(ft_strchr(tmp->content, '$') + 1)))
+		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$')
+			&& *(ft_strchr(tmp->content, '$') + 1)
+				&& isalnum(*(ft_strchr(tmp->content, '$') + 1)))
 		{
-			printf("__________????\n");
+			// printf("__________????\n");
 			tmp2 = tmp->content;
 			tmp->content = var_expand(tmp->content);
 			free(tmp2);

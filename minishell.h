@@ -57,6 +57,7 @@ typedef struct s_env
 }           t_env;
 //__________________________Libft functions
 char	*ft_strchr(const char *s, int c);
+int		isnum(char c);
 char	**ft_split(char const *s, char c);
 char	*ft_strdup(const char *s1, int n);
 char	*ft_strjoin(char const *s1, char const *s2);
