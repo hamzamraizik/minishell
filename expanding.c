@@ -119,7 +119,6 @@ char *var_expand(const char *word)
 
 	while (word[i])
 	{
-	
 		if (word[i] == '\'' &&  is_quotes != 1)
 		{
 			tmp = strndup(word + start, i - start);
@@ -129,9 +128,9 @@ char *var_expand(const char *word)
 			tmp = handle_single_quotes(word, &i);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-			start = i+1;
+			start = i + 1;
 		}
-		else if (word[i] == '"')
+		if (word[i] == '"')
 		{
 			tmp = strndup(word + start, i - start);
 			result = ft_strjoin(result, tmp);
@@ -143,7 +142,7 @@ char *var_expand(const char *word)
 
 			start = i;
 		}
-		else if (word[i] == '$')
+		if (word[i] == '$')
 		{
 			if (special_vars(&result, &word, &start, &i) != 0)
 				continue;
