@@ -21,5 +21,5 @@ char	*is_var(char **env, char *var)
 		}
 		i++;
 	}
-	return(result);
+	return (result);
 }

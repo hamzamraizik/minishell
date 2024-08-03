@@ -22,8 +22,6 @@ char *expand_variable(const char *str, int *index)
 		(*index)++;
 	}
 	name[var_len] = '\0';
-	// (*index)--; //because i was incremented one more, in the loop.
-
 	result = is_var(ft_envp, name);
 	return (result);
 }
@@ -76,12 +74,12 @@ char *handle_double_quotes(const char *str, int *index)
 			(*index)++;
 			// Expand variable inside double quotes
 			tmp = expand_variable(str, index);
+			printf("____%s_____\n", tmp);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-
 			start = *index;
 		}
-		tmp = strndup(str + start, *index- start);
+		tmp = strndup(str + start, (*index - start));
 		result = ft_strjoin(result, tmp);
 		free(tmp);
 		start = (*index);
@@ -145,7 +143,7 @@ char *var_expand(const char *word)
 			is_quotes = check_quotes(is_quotes, word[i]);
 			start = i + 1;
 		}
-		if (word[i] == '$')
+		if (word[i] == '$' && is_quotes == 0)
 		{
 			if (special_vars(&result, &word, &start, &i) != 0)
 				continue;
