@@ -22,6 +22,7 @@ char *expand_variable(const char *str, int *index)
 		(*index)++;
 	}
 	name[var_len] = '\0';
+	printf("NAME_______%s__\n", str + (*index));
 	result = is_var(ft_envp, name);
 	return (result);
 }
@@ -74,16 +75,24 @@ char *handle_double_quotes(const char *str, int *index)
 			(*index)++;
 			// Expand variable inside double quotes
 			tmp = expand_variable(str, index);
+			start = (*index);
 			printf("____%s_____\n", tmp);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-			start = *index;
+			start = (*index);
 		}
-		tmp = strndup(str + start, (*index - start));
+		// if (str[*index] != '"')
+		// {
+			// start = (*index) + 1;
+			// (*index)++;
+		// }
+		(*index)++;
+	}
+	if (str[(start)] != '"')
+	{
+		tmp = strndup(str + start, *index - start);
 		result = ft_strjoin(result, tmp);
 		free(tmp);
-		start = (*index);
-		(*index)++;
 	}
 	return (result);
 }
