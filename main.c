@@ -79,7 +79,7 @@ void	*parse_line(char *line, t_list	**head, int length)
 	// free_line(new_line);
 	return (NULL);
 }
-
+// void remove
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -101,6 +101,7 @@ int main(int argc, char **argv, char **envp)
 		parse_line(new_line, &head, ft_strlen(new_line));
 		if (syntax_error(head) == 1 && !lstclear(head))
 			continue ;
+		// remove_empty_quotes(&head);
 		expanding(&head);
 		while(head != NULL)
 		{

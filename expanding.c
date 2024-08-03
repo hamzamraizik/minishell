@@ -9,20 +9,20 @@ char *expand_variable(const char *str, int *index)
 	int		i;
 
 	i = *index;
-	while (str[i] && (isalnum(str[i]) || str[i] == '_'))
+	while (str[i] && str[i] != ' ' && (isalnum(str[i]) || str[i] == '_'))
 	{
 		Name_length++;
 		i++;
 	}
 	name = malloc(Name_length + 1);
-	while (str[*index] && (isalnum(str[*index]) || str[*index] == '_'))
+	while (str[*index] && str[*index] != ' ' && str[*index] != '"' && (isalnum(str[*index]) || str[*index] == '_'))
 	{
 		name[var_len] = str[*index];
 		var_len++;
 		(*index)++;
 	}
 	name[var_len] = '\0';
-	(*index)--; //because i was incremented one more, in the loop.
+	// (*index)--; //because i was incremented one more, in the loop.
 
 	result = is_var(ft_envp, name);
 	return (result);
@@ -64,12 +64,10 @@ char *handle_double_quotes(const char *str, int *index)
 	char *tmp;
 	int start = *index;
 
-	(*index)++; // for the first double quote
-
 	while (str[*index] && str[*index] != '"')
 	{
-		if (special_vars(&result, &str, &start, index))
-			continue;
+		// if (special_vars(&result, &str, &start, index))
+		// 	continue;
 		if (str[*index] == '$' && str[*index + 1] && !isnum(str[*index + 1]))
 		{
 			tmp = strndup(str + start, *index - start);
@@ -81,14 +79,14 @@ char *handle_double_quotes(const char *str, int *index)
 			result = ft_strjoin(result, tmp);
 			free(tmp);
 
-			start = *index + 1; // +1 for start being equal to index after incremented in the loop
+			start = *index;
 		}
+		tmp = strndup(str + start, *index- start);
+		result = ft_strjoin(result, tmp);
+		free(tmp);
+		start = (*index);
 		(*index)++;
 	}
-	(*index)++; // for skip the closing double quote
-	tmp = strndup(str + start, *index - start - 1);
-	result = ft_strjoin(result, tmp);
-	free(tmp);
 	return (result);
 }
 
@@ -97,14 +95,14 @@ char *handle_single_quotes(const char *str, int *index)
 	char *result = strdup("");
 	int start = *index;
 
-	(*index)++; // Skip the initial single quote
+	// (*index)++; // Skip the initial single quote
 
 	while (str[*index] && str[*index] != '\'')
 	{
 		(*index)++;
 	}
 
-	result = strndup(str + start + 1, *index - start - 1);
+	result = strndup(str + start, *index - start);
 
 	// (*index)++; // Skip the closing single quote
 
@@ -119,28 +117,33 @@ char *var_expand(const char *word)
 
 	while (word[i])
 	{
-		if (word[i] == '\'' &&  is_quotes != 1)
+		is_quotes = check_quotes(is_quotes, word[i]);
+		if (word[i] == '\'' &&  is_quotes == 1)
 		{
 			tmp = strndup(word + start, i - start);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-
-			tmp = handle_single_quotes(word, &i);
+			start = ++i;
+			while (word[i] != '\'')
+				i++;
+			tmp = strndup(word + start, i - start);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
+			is_quotes = 0;
 			start = i + 1;
 		}
-		if (word[i] == '"')
+		else if (word[i] == '"' && is_quotes == 2)
 		{
 			tmp = strndup(word + start, i - start);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
 
+			++i;// skip the first quotes
 			tmp = handle_double_quotes(word, &i);
-			result = ft_strjoin(result, tmp + 1);
+			result = ft_strjoin(result, tmp);
 			free(tmp);
-
-			start = i;
+			is_quotes = check_quotes(is_quotes, word[i]);
+			start = i + 1;
 		}
 		if (word[i] == '$')
 		{
@@ -155,7 +158,6 @@ char *var_expand(const char *word)
 			free(tmp);
 			start = i + 1;
 		}
-		is_quotes = check_quotes(is_quotes, word[i]);
 		i++;
 	}
 	tmp = strndup(word + start, i - start);
