@@ -9,7 +9,7 @@ char	*is_var(char **env, char *var)
 
 	i = 0;
 	// j = 0;
-	result = strdup("");
+	result = NULL;
 	while (env[i])
 	{
 		line = ft_split(env[i], '=');
@@ -17,9 +17,12 @@ char	*is_var(char **env, char *var)
 		{
 			var = line[1];
 			result = strdup(var);
+			free(line[0]);
+			free(line[1]);
+			free(line);
 			return (result);
 		}
 		i++;
 	}
-	return (result);
+	return ((result = strdup("")));
 }
