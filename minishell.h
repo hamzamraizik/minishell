@@ -80,6 +80,6 @@ void    s_with_d_Q(char *s);
 // expanding functions
 void    expanding(t_list **head);
 char    *is_var(char **env, char *var);
-void take_rest(char **result, const char *word, int start, int i);
+void	take_previous(char **result, const char *word, int start, int i);
 
 #endif // MINISHELL_H
