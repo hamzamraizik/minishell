@@ -68,16 +68,97 @@ int	count_new_len(char *line, int old_len)
 	return (old_len);
 }
 
-void	*parse_line(char *line, t_list	**head, int length)
+void	re_tokenizing(t_list **head)
 {
-	char **new_line;
+		
+		
+	// puts("*");
+	t_list	*tmp;
+
+	tmp = *head;
+	while (tmp)
+	{
+		if (tmp->type == HEREDOC && tmp->next && tmp->next->type == WORD)
+			tmp->next->type = DELEMETRE;
+		tmp = tmp->next;
+	}
+}
+void remove_quotes(t_list **head) {
+    t_list *tmp;
+    int start, end, i, j;
+    int is_quotes = 0;
+    char *result;
+
+    tmp = *head;
+    while (tmp) {
+        if (strchr(tmp->content, '"') || strchr(tmp->content, '\'')) {
+            // Step 1: Find the first and last non-quote characters
+            start = 0;
+            end = strlen(tmp->content) - 1;
+
+            // Skip leading outer quotes
+            while (start <= end && (tmp->content[start] == '"' || tmp->content[start] == '\'')) {
+                is_quotes = check_quotes(is_quotes, tmp->content[start]);
+                if (is_quotes == 1 || is_quotes == 2) {
+                    while (start <= end && tmp->content[start] != (is_quotes == 1 ? '\'' : '"')) {
+                        start++;
+                    }
+                    if (start <= end) start++; // Skip the closing quote
+                } else {
+                    break;
+                }
+            }
+
+            // Skip trailing outer quotes
+            while (end >= start && (tmp->content[end] == '"' || tmp->content[end] == '\'')) {
+                is_quotes = check_quotes(is_quotes, tmp->content[end]);
+                if (is_quotes == 1 || is_quotes == 2) {
+                    while (end >= start && tmp->content[end] != (is_quotes == 1 ? '\'' : '"')) {
+                        end--;
+                    }
+                    if (end >= start) end--; // Skip the closing quote
+                } else {
+                    break;
+                }
+            }
+
+            // Allocate memory for the result string
+            result = malloc(end - start + 2); // +2 to include null terminator and possibly one character
+            if (!result) {
+                perror("malloc failed");
+                exit(EXIT_FAILURE);
+            }
+
+            // Copy the content while preserving inner quotes
+            i = start;
+            j = 0;
+            is_quotes = 0;
+            while (i <= end) {
+                is_quotes = check_quotes(is_quotes, tmp->content[i]);
+                result[j++] = tmp->content[i++];
+            }
+            result[j] = '\0';
+
+            // Update the list node with the new content
+            free(tmp->content);
+            tmp->content = result;
+        }
+        tmp = tmp->next;
+    }
+}
+
+
+void	parse_line(char *line, t_list	**head, int length)
+{
+	char	**new_line;
 
 	*head = NULL;
 	line = add_delimetre(line);
 	new_line = ft_new_split(line, '\0', length);
 	tokenizing(head, new_line);
+	re_tokenizing(head);
 	// free_line(new_line);
-	return (NULL);
+	return ;
 }
 // void remove
 int main(int argc, char **argv, char **envp)
@@ -93,19 +174,22 @@ int main(int argc, char **argv, char **envp)
 	head = NULL;
 	while (1)
 	{
-		 line = readline(GREEN BOLD "Minishell " YELLOW BOLD"-> " RESET);
-		add_history(line);
+		 line = readline("Minishell -> ");
+		 if(*line)
+			add_history(line);
 		if (check_if_empty(line) || first_syntax_check(line))
 			continue ;
 		new_line = add_spaces(line);
 		parse_line(new_line, &head, ft_strlen(new_line));
 		if (syntax_error(head) == 1 && !lstclear(head))
 			continue ;
-		// remove_empty_quotes(&head);
 		expanding(&head);
+		remove_quotes(&head);
 		while(head != NULL)
 		{
-			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : head->type == 6 ? "OUT" : head->type == 8 ? "SEMI" : "WORD");
+			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : 
+				head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : 
+					head->type == 6 ? "OUT" : head->type == 12 ? "DELEMETRE" : "WORD");
 			head = head->next;
 		}
 		lstclear(head);

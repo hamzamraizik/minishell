@@ -30,14 +30,11 @@ typedef enum e_tokens
 	PIPE	= 1,
 	HEREDOC	= 2,
 	APPEND	= 3,
-	TRUNC	= 4,
 	IN		= 5,
 	OUT		= 6,
 	VAR     = 7,
-	D_QUOTES = 8,
-	T_SPACE   = 9,
 	WORD    = 10,
-	S_QUOTES = 11,
+	DELEMETRE = 12,
 }       t_tokenz;
 
 typedef struct s_list
@@ -85,5 +82,6 @@ void    s_with_d_Q(char *s);
 // expanding functions
 void    expanding(t_list **head);
 char    *is_var(char **env, char *var);
+void take_rest(char **result, const char *word, int start, int i);
 
 #endif // MINISHELL_H

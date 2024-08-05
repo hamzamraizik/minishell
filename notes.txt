@@ -13,3 +13,7 @@ test this in IMAC:
 
 malloc(): invalid size (unsorted)
 Aborted (core dumped)
+
+
+$"" : in this case the '$' must skiped
+if the node before var $.. , not expand it, 
