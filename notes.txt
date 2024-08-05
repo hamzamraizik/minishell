@@ -16,4 +16,10 @@ Aborted (core dumped)
 
 
 $"" : in this case the '$' must skiped
-if the node before var $.. , not expand it, 
+if the node before var $.. , is heredoc type so not expand it, 
+
+this case should handled :
+/*
+echo $-
+OUT -> himBHs *
+/

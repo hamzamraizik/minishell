@@ -23,8 +23,6 @@
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"
 
-extern char **ft_envp;
-
 typedef enum e_tokens
 {
 	PIPE	= 1,
