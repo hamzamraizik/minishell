@@ -2,7 +2,7 @@
 
 void	tokenizing(t_list **head, char **line)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (line[i])
@@ -17,6 +17,8 @@ void	tokenizing(t_list **head, char **line)
 			list_add_back(head, creat_node(line[i], APPEND));
 		else if (strncmp(line[i],">", 1) == 0)
 			list_add_back(head, creat_node(line[i], OUT));
+		else if (get_last_node(*head) && get_last_node(*head)->type == HEREDOC)
+			list_add_back(head, creat_node(line[i], DELEMETRE));
 		else
 			list_add_back(head, creat_node(line[i], WORD));
 		i++;

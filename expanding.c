@@ -203,8 +203,9 @@ char *handle_var(const char *word)
 
 	while (word[i])
 	{
-		
-		if (!quotes_cases(&result, word, &i, &start) && word[i] == '$' && word[i + 1] != '$')
+		if (quotes_cases(&result, word, &i, &start))
+			continue;
+		 else if (word[i] == '$' && word[i + 1] != '$')
 		{
 			if (special_vars(&result, &word, &start, &i) != 0 && i++)
 				continue;
@@ -215,7 +216,9 @@ char *handle_var(const char *word)
 			free(tmp);
 			start = i;
 		}
-		else if (double_$_cases(&result, word, &i, &start) == 0)
+		else if (double_$_cases(&result, word, &i, &start))
+			continue;
+		else
 			i++;
 	}
 	take_previous(&result, word, start, i);

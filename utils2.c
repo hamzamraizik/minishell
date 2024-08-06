@@ -1,45 +1,38 @@
 #include "minishell.h"
 
-int	isnum(char c)
+/*this func loop over line and when fond space will replace it
+	by '\0' and skip if there multiple spaces . i'm using 
+		struct 'args' and func initial_init()
+		   just for avoid norminette errors */
+char	*add_spaces(char *line, int new_len)
 {
-	if (c >= '0' && c <= '9')
-		return (1);
-	else
-		return (0);
-}
-
-char *add_spaces(char *line)
-{
-	int				new_len;
 	char			*new_line;
 	unsigned char	c;
-	int				i;
-	int				j;
-	int				is_quots;
+	t_args			args;
 
-	i = j = is_quots = 0;
-	new_len = count_new_len(line, ft_strlen(line));
+	initial_ints(&(args.i), &(args.j), &(args.is_quots));
 	new_line = (char *)malloc(sizeof(char) * (new_len + 1));
-	//protection
-	while (line[i])
+	if (!new_line)
+		return (NULL);
+	while (line[args.i])
 	{
-		is_quots = check_quotes(is_quots, line[i]);
-		if (line[i] && check_special(line[i]) && !is_quots)
+		args.is_quots = check_quotes(args.is_quots, line[args.i]);
+		if (line[args.i] && check_special(line[args.i]) && !args.is_quots)
 		{
-			c = line[i];
-			new_line[j] = ' ';
-			while (line[i] && line[i] == c)
-				new_line[++j] = line[i++];
-			new_line[++j] = ' ';
-			++j;
+			c = line[args.i];
+			new_line[args.j] = ' ';
+			while (line[args.i] && line[args.i] == c)
+				new_line[++args.j] = line[args.i++];
+			new_line[++args.j] = ' ';
+			++args.j;
 		}
 		else
-			new_line[j++] = line[i++];
+			new_line[args.j++] = line[args.i++];
 	}
-	return (new_line[j] = '\0', free(line), new_line);
+	return (new_line[args.j] = '\0', free(line), new_line);
 }
 
-int count_char(char *line, char c)
+int	count_char(char *line, char c)
 {
 	int	count;
 	int	i;
@@ -54,13 +47,14 @@ int count_char(char *line, char c)
 	return (count);
 }
 
-char    *remove_char(char *line, char c)
+char	*remove_char(char *line, char c)
 {
 	char	*str;
 	int		i;
 	int		j;
 
-	i = j = 0;
+	i = 0;
+	j = 0;
 	str = malloc(ft_strlen(line) - count_char(line, c) + 1);
 	if (!str || !line)
 		return (NULL);
@@ -74,7 +68,7 @@ char    *remove_char(char *line, char c)
 	return (free(line), str);
 }
 
-int syntax_error(t_list *head)
+int	syntax_error(t_list *head)
 {
 	t_list	*tmp;
 
@@ -92,16 +86,4 @@ int syntax_error(t_list *head)
 		tmp = tmp->next;
 	}
 	return (0);
-}
-
-void	*lstclear(t_list *tmp)
-{
-	t_list *tmp2;
-	while (tmp)
-	{
-		tmp2 = tmp;
-		tmp = tmp->next;
-		free(tmp2);
-	}
-	return (NULL);
 }

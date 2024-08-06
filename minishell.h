@@ -23,6 +23,13 @@
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"
 
+typedef struct s_args
+{
+	int				i;
+	int				j;
+	int				is_quots;
+}		t_args;
+
 typedef enum e_tokens
 {
 	PIPE	= 1,
@@ -50,6 +57,7 @@ typedef struct s_env
 	char    *key;
 	char    *value;
 }           t_env;
+
 //__________________________Libft functions
 char	*ft_strchr(const char *s, int c);
 int		isnum(char c);
@@ -63,15 +71,17 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	**ft_new_split(const char *s, char c, size_t len);
 void	tokenizing(t_list **head, char **line);
 char    *add_delimetre(char *line);
-char    *add_spaces(char *line);
+char	*add_spaces(char *line, int new_len);
 int     count_char(char *line, char c);
 int     count_new_len(char *line, int old_len);
+void	initial_ints(int *i, int *j, int *k);
 char	*remove_char(char *line, char c);
 int     syntax_error(t_list *head);
 //_________________________linked list functions
 void	*creat_node(char *content, int type);
 void	list_add_back(t_list **head, t_list *new);
 void    *lstclear(t_list *tmp);
+t_list  *get_last_node(t_list *head);
 //___________________________check functions
 int		check_if_empty(char *line);
 int     check_special(char c);
