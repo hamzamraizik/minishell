@@ -13,3 +13,13 @@ test this in IMAC:
 
 malloc(): invalid size (unsorted)
 Aborted (core dumped)
+
+
+$"" : in this case the '$' must skiped // FIXED
+if the node before var $.. , is heredoc type so not expand it, // FIXED 
+
+this case should handled :
+/*
+echo $-
+OUT -> himBHs *
+/

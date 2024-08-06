@@ -20,6 +20,7 @@ char *add_spaces(char *line)
 	i = j = is_quots = 0;
 	new_len = count_new_len(line, ft_strlen(line));
 	new_line = (char *)malloc(sizeof(char) * (new_len + 1));
+	//protection
 	while (line[i])
 	{
 		is_quots = check_quotes(is_quots, line[i]);
@@ -80,7 +81,7 @@ int syntax_error(t_list *head)
 	tmp = head;
 	while (tmp)
 	{
-		if (tmp->next && tmp->type == HEREDOC && tmp->next->type != WORD)
+		if (tmp->next && tmp->type == HEREDOC && tmp->next->type != DELEMETRE)
 			return (1);
 		else if (tmp->next && tmp->type == APPEND && tmp->next->type != WORD)
 			return (1);

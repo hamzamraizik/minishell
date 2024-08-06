@@ -1,50 +1,67 @@
 #include "minishell.h"
-
+ /*this func when will the var expanded, replaced with it
+ 	real value in the env if it exist, if not exist
+		then it will replaced by '\0'*/
 char *expand_variable(const char *str, int *index)
 {
-	char	*result = NULL;
-	int		Name_length = 0;
-	int		var_len = 0;
-	char	*name;
-	int		i;
+	char *result;
+	int Name_length;
+	int var_len;
+	char *name;
+	int i = *index;
 
-	i = *index;
-	while (str[i] && (isalnum(str[i]) || str[i] == '_'))
+	Name_length = var_len = 0;
+	result = NULL;
+	while (str[i] && str[i] != ' ' && (isalnum(str[i]) || str[i] == '_'))
 	{
 		Name_length++;
 		i++;
 	}
 	name = malloc(Name_length + 1);
-	while (str[*index] && (isalnum(str[*index]) || str[*index] == '_'))
+	if (!name)
+		return (printf("malloc failed!\n"), NULL);
+	while (str[*index] && str[*index] != ' ' && str[*index] != '"' 
+			&& (isalnum(str[*index]) || str[*index] == '_'))
 	{
 		name[var_len] = str[*index];
 		var_len++;
 		(*index)++;
 	}
 	name[var_len] = '\0';
-	(*index)--; //because i was incremented one more, in the loop.
-
-	result = is_var(ft_envp, name);
+	name = getenv(name);
+	if (name)
+		result = strdup(name);
+	else
+		result = strdup("");
 	return (result);
 }
 
-int	special_vars(char **result, const char **str, int *start, int *index)
+int special_vars(char **result, const char **str, int *start, int *index)
 {
 	char	*tmp;
-	int		flag;
+	int		flag = 0;
 
-	flag = 0;
 	if ((*str)[*index] == '$' && (*str)[*index + 1] == '0')
 	{
 		flag = 1;
-		tmp = strndup((*str) + (*start), *index - (*start));
+		tmp = strndup((*str) + (*start), (*index) - (*start));
 		*result = ft_strjoin(*result, tmp);
 		free(tmp);
 		*result = ft_strjoin(*result, "bash");
 		(*index)++; //skip the symbol '$'
 		(*start) = (*index) + 1; // ++1 for start after '0'
 	}
-	if ((*str)[*index] == '$' && (*str)[*index + 1] && isnum((*str)[*index + 1]))
+	else if ((*str)[*index] == '$' && (*str)[*index + 1] == '-')
+	{
+		flag = 1;
+		tmp = strndup((*str) + (*start), (*index) - (*start));
+		*result = ft_strjoin(*result, tmp);
+		free(tmp);
+		*result = ft_strjoin(*result, "himBHs");
+		(*index)++; //skip the symbol '$'
+		(*start) = (*index) + 1; // ++1 for start after '0'
+	}
+	else if ((*str)[*index] == '$' && (*str)[*index + 1] && isnum((*str)[*index + 1]))
 	{
 		flag = 2;
 		tmp = strndup((*str) + (*start), *index - (*start));
@@ -53,116 +70,139 @@ int	special_vars(char **result, const char **str, int *start, int *index)
 		(*index)++;
 		(*start) = (*index) + 1;
 	}
-	else
-		return(flag);
 	return (flag);
 }
-
-char *handle_double_quotes(const char *str, int *index)
+/*this func will handle the double quotes when there is an var inside it
+	by cancatenate while inside quotes until find a $ and then take 
+		the Var NAME after it, if it valid then will expand it */
+char *handle_d_q_var(const char *str, int *index)
 {
 	char *result = strdup("");
 	char *tmp;
 	int start = *index;
 
-	(*index)++; // for the first double quote
-
 	while (str[*index] && str[*index] != '"')
 	{
-		if (special_vars(&result, &str, &start, index))
+		if (special_vars(&result, &str, &start, index) && (*index)++)
 			continue;
-		if (str[*index] == '$' && str[*index + 1] && !isnum(str[*index + 1]))
+		if (str[*index] == '$' && str[*index + 1] != '$'
+			&& !isnum(str[*index + 1]) && str[*index + 1] != '"')
 		{
-			tmp = strndup(str + start, *index - start);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
+			take_previous(&result, str, start, (*index));
 			(*index)++;
-			// Expand variable inside double quotes
 			tmp = expand_variable(str, index);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-
-			start = *index + 1; // +1 for start being equal to index after incremented in the loop
+			start = *index;
 		}
-		(*index)++;
+		else if (str[*index] == '$' && str[*index + 1] == '$')
+		{
+			(*index) += 2;
+			take_previous(&result, str, start, (*index));
+			start = (*index);
+		}
+		else
+			(*index)++;
 	}
-	(*index)++; // for skip the closing double quote
-	tmp = strndup(str + start, *index - start - 1);
-	result = ft_strjoin(result, tmp);
-	free(tmp);
+	take_previous(&result, str, start, (*index));
+	(*index)++; // Skip the closing double quote
 	return (result);
 }
-
-char *handle_single_quotes(const char *str, int *index)
+/* this func work when there is an single quotes so it will
+	concatenate around the string until find 
+			the closed quotes */
+char *handle_s_q_var(const char *str, int *index)
 {
-	char *result = strdup("");
-	int start = *index;
+	char *result;
+	int start;
 
-	(*index)++; // Skip the initial single quote
-
+	start = (*index);
 	while (str[*index] && str[*index] != '\'')
 	{
 		(*index)++;
 	}
-
-	result = strndup(str + start + 1, *index - start - 1);
-
-	// (*index)++; // Skip the closing single quote
-
-	return result;
+	result = strndup(str + start, *index - start);
+	(*index)++; // Skip the closing single quote
+	return (result);
 }
 
-char *var_expand(const char *word)
+/* this func take the characters that exist before expand the actual variable
+ 			and join it to the result like : "hello$USER" -> it will join 
+					the word hello before expand $USER.
+*/
+void take_previous(char **result, const char *word, int start, int i)
+{
+	char	*tmp;
+
+	tmp = strndup(word + start, i - start);
+	*result = ft_strjoin(*result, tmp);
+	free(tmp);
+}
+
+/*this func check the case of var, if it inside quotes or not...
+	and deppend on this it expand it or not*/
+char *handle_var(const char *word)
 {
 	char *result = strdup("");
 	char *tmp;
-	int i = 0, start = 0, is_quotes = 0;
+	int i = 0, start = 0;
 
 	while (word[i])
 	{
-		if (word[i] == '\'' &&  is_quotes != 1)
-		{
-			tmp = strndup(word + start, i - start);
+		if (word[i] == '\'') {
+			take_previous(&result, word, start, i);
+			start = ++i;//skip initial quotes
+			tmp = handle_s_q_var(word, &i);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-
-			tmp = handle_single_quotes(word, &i);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			start = i + 1;
-		}
-		if (word[i] == '"')
-		{
-			tmp = strndup(word + start, i - start);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-
-			tmp = handle_double_quotes(word, &i);
-			result = ft_strjoin(result, tmp + 1);
-			free(tmp);
-
 			start = i;
 		}
-		if (word[i] == '$')
+		else if (word[i] == '"')
 		{
-			if (special_vars(&result, &word, &start, &i) != 0)
-				continue;
-			tmp = strndup(word + start, i - start);
+			take_previous(&result, word, start, i);
+			start = ++i;
+			tmp = handle_d_q_var(word, &i);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
+			start = i;
+		}
+		else if (word[i] == '$' && word[i + 1] != '$')
+		{
+			if (special_vars(&result, &word, &start, &i) != 0 && i++)
+				continue;
+			take_previous(&result, word, start, i);
 			i++;
 			tmp = expand_variable(word, &i);
 			result = ft_strjoin(result, tmp);
 			free(tmp);
-			start = i + 1;
+			start = i;
 		}
-		is_quotes = check_quotes(is_quotes, word[i]);
-		i++;
+		else if (word[i] == '$' && (word[i + 1] == '$' 
+			|| word[i + 1] == '"' || word[i + 1] == '"'))
+		{
+			if (word[i + 1] == '$')
+			{
+				i += 2;
+				take_previous(&result, word, start, i);
+			}
+			else
+			{
+				take_previous(&result, word, start, i);
+				++i;
+			}
+			start = i;
+		}
+		else
+			i++;
 	}
-	tmp = strndup(word + start, i - start);
-	result = ft_strjoin(result, tmp);
-	free(tmp);
+	take_previous(&result, word, start, i);
 	return (result);
 }
+
+/*in this func will looping around all the tokenz and detect is the 
+	an var exist, if it then pass it to handle_var to expand
+		if it a valid var
+*/
 
 void expanding(t_list **head)
 {
@@ -175,12 +215,18 @@ void expanding(t_list **head)
 	while (tmp)
 	{
 		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$')
-			&& *(ft_strchr(tmp->content, '$') + 1)
-				&& isalnum(*(ft_strchr(tmp->content, '$') + 1)))
+			&& *(ft_strchr(tmp->content, '$') + 1) // there is an $ and after it not '\0'
+				&& (isalnum(*(ft_strchr(tmp->content, '$') + 1))
+				|| *(ft_strchr(tmp->content, '$') + 1) == '$'// for multi dollar
+				|| *(ft_strchr(tmp->content, '$') + 1) == '_'// for underscore
+				|| *(ft_strchr(tmp->content, '$') + 1) == '-'
+				|| *(ft_strchr(tmp->content, '$') + 1) == '"'//for double quotes
+				|| *(ft_strchr(tmp->content, '$') + 1) == '\'')//for single quotes
+				&& tmp->type != DELEMETRE)
 		{
-			// printf("__________????\n");
 			tmp2 = tmp->content;
-			tmp->content = var_expand(tmp->content);
+			tmp->content = handle_var(tmp->content);
+			tmp->type = VAR;
 			free(tmp2);
 		}
 		tmp = tmp->next;

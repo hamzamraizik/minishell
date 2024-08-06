@@ -2,7 +2,7 @@
 
 void	tokenizing(t_list **head, char **line)
 {
-	int	i;
+	int		i;
 
 	i = 0;
 	while (line[i])
@@ -32,14 +32,7 @@ char *add_delimetre(char *line)
 	is_quotes = 0;
 	while (line[i])
 	{
-		if (is_quotes == 0 && line[i] == '\'')
-			is_quotes = 1;
-		else if (is_quotes == 0 && line[i] == '\"')
-			is_quotes = 2;
-		else if (is_quotes == 1 && line[i] == '\'')
-			is_quotes = 0;
-		else if (is_quotes == 2 && line[i] == '\"')
-			is_quotes = 0;
+		is_quotes = check_quotes(is_quotes, line[i]);
 		if (is_quotes == 0 && line[i] == ' ')
 		{
 			line[i] = '\0';
