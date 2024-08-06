@@ -80,11 +80,12 @@ void	re_tokenizing(t_list **head)
 		tmp = tmp->next;
 	}
 }
-void remove_quotes(t_list **head) {
-    t_list *tmp;
-    int start, end, i, j;
-    int is_quotes = 0;
-    char *result;
+void remove_quotes(t_list **head)
+{
+    t_list	*tmp;
+    int		start, end, i, j;
+    int		is_quotes = 0;
+    char	*result;
 
     tmp = *head;
     while (tmp) {
@@ -164,8 +165,7 @@ int main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	// (void)envp;
-	ft_envp = envp;
+	(void)envp;
 	head = NULL;
 	while (1)
 	{
@@ -179,7 +179,7 @@ int main(int argc, char **argv, char **envp)
 		if (syntax_error(head) == 1 && !lstclear(head))
 			continue ;
 		expanding(&head);
-		remove_quotes(&head);
+		// remove_quotes(&head);
 		while(head != NULL)
 		{
 			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : 
