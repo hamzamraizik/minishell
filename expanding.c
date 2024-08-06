@@ -139,6 +139,60 @@ void take_previous(char **result, const char *word, int start, int i)
 	free(tmp);
 }
 
+int double_$_cases(char **result,const char *word, int *i, int *start)
+{
+	// char	*tmp;
+	int		flag;
+
+	flag = 0;
+	if (word[(*i)] == '$' && (word[(*i) + 1] == '$'
+			|| word[(*i) + 1] == '"' || word[(*i) + 1] == '\''))
+	{
+		if (word[(*i) + 1] == '$')
+		{
+			(*i) += 2;
+			take_previous(result, word, (*start), (*i));
+		}
+		else
+		{
+			take_previous(result, word, (*start), (*i));
+			++(*i);
+		}
+		(*start) = *i;
+		flag = 1;
+	}
+	return (flag);
+}
+
+int	quotes_cases(char **result,const char *word, int *i, int *start)
+{
+	char	*tmp;
+	int		flag;
+
+	flag = 0;
+	if (word[*i] == '\'')
+	{
+			take_previous(result, word, *start, *i);
+			*start = ++*i;//skip initial quotes
+			tmp = handle_s_q_var(word, i);
+			*result = ft_strjoin(*result, tmp);
+			free(tmp);
+			*start = *i;
+			flag = 1;
+	}
+	else if (word[*i] == '"')
+	{
+			take_previous(result, word, *start, *i);
+			*start = ++(*i);
+			tmp = handle_d_q_var(word, i);
+			*result = ft_strjoin(*result, tmp);
+			free(tmp);
+			*start = *i;
+			flag = 2;
+	}
+	return (flag);
+}
+
 /*this func check the case of var, if it inside quotes or not...
 	and deppend on this it expand it or not*/
 char *handle_var(const char *word)
@@ -149,24 +203,8 @@ char *handle_var(const char *word)
 
 	while (word[i])
 	{
-		if (word[i] == '\'') {
-			take_previous(&result, word, start, i);
-			start = ++i;//skip initial quotes
-			tmp = handle_s_q_var(word, &i);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			start = i;
-		}
-		else if (word[i] == '"')
-		{
-			take_previous(&result, word, start, i);
-			start = ++i;
-			tmp = handle_d_q_var(word, &i);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			start = i;
-		}
-		else if (word[i] == '$' && word[i + 1] != '$')
+		
+		if (!quotes_cases(&result, word, &i, &start) && word[i] == '$' && word[i + 1] != '$')
 		{
 			if (special_vars(&result, &word, &start, &i) != 0 && i++)
 				continue;
@@ -177,33 +215,28 @@ char *handle_var(const char *word)
 			free(tmp);
 			start = i;
 		}
-		else if (word[i] == '$' && (word[i + 1] == '$' 
-			|| word[i + 1] == '"' || word[i + 1] == '"'))
-		{
-			if (word[i + 1] == '$')
-			{
-				i += 2;
-				take_previous(&result, word, start, i);
-			}
-			else
-			{
-				take_previous(&result, word, start, i);
-				++i;
-			}
-			start = i;
-		}
-		else
+		else if (double_$_cases(&result, word, &i, &start) == 0)
 			i++;
 	}
 	take_previous(&result, word, start, i);
 	return (result);
 }
 
+int accepted_chars(t_list	*tmp)
+{
+	if (*(ft_strchr(tmp->content, '$') + 1) == '$'// for multi dollar
+				|| *(ft_strchr(tmp->content, '$') + 1) == '_'// for underscore
+				|| *(ft_strchr(tmp->content, '$') + 1) == '-'
+				|| *(ft_strchr(tmp->content, '$') + 1) == '"'//for double quotes
+				|| *(ft_strchr(tmp->content, '$') + 1) == '\'')//for single quotes)
+			return (1);
+	else
+		return (0);
+}
+
 /*in this func will looping around all the tokenz and detect is the 
 	an var exist, if it then pass it to handle_var to expand
-		if it a valid var
-*/
-
+					if it a valid var */
 void expanding(t_list **head)
 {
 	t_list	*tmp;
@@ -216,12 +249,7 @@ void expanding(t_list **head)
 	{
 		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$')
 			&& *(ft_strchr(tmp->content, '$') + 1) // there is an $ and after it not '\0'
-				&& (isalnum(*(ft_strchr(tmp->content, '$') + 1))
-				|| *(ft_strchr(tmp->content, '$') + 1) == '$'// for multi dollar
-				|| *(ft_strchr(tmp->content, '$') + 1) == '_'// for underscore
-				|| *(ft_strchr(tmp->content, '$') + 1) == '-'
-				|| *(ft_strchr(tmp->content, '$') + 1) == '"'//for double quotes
-				|| *(ft_strchr(tmp->content, '$') + 1) == '\'')//for single quotes
+				&& (isalnum(*(ft_strchr(tmp->content, '$') + 1)) || accepted_chars(tmp))
 				&& tmp->type != DELEMETRE)
 		{
 			tmp2 = tmp->content;
