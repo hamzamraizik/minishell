@@ -4,49 +4,41 @@
 		then it will replaced by '\0'*/
 char *expand_variable(const char *str, int *index)
 {
-	char *result;
-	int Name_length;
-	int var_len;
-	char *name;
-	int i = *index;
+	char	*result;
+	int		Name_length;
+	int		var_len;
+	char	*name;
+	int		i;
 
-	Name_length = var_len = 0;
+	i = *index;
+	initial_ints(&Name_length, &var_len, NULL);
 	result = NULL;
-	while (str[i] && str[i] != ' ' && (isalnum(str[i]) || str[i] == '_'))
-	{
+	while (str[i] && str[i] != ' ' && (isalnum(str[i]) || str[i] == '_') && i++)
 		Name_length++;
-		i++;
-	}
 	name = malloc(Name_length + 1);
 	if (!name)
 		return (printf("malloc failed!\n"), NULL);
-	while (str[*index] && str[*index] != ' ' && str[*index] != '"' 
-			&& (isalnum(str[*index]) || str[*index] == '_'))
+	while (isalnum(str[*index]) || str[*index] == '_')
 	{
 		name[var_len] = str[*index];
 		var_len++;
 		(*index)++;
 	}
 	name[var_len] = '\0';
-	name = getenv(name);
-	if (name)
-		result = strdup(name);
-	else
-		result = strdup("");
-	return (result);
+	if (getenv(name))// check if getenv doesn't return NULL
+		return ((result = strdup(getenv(name))));
+	return (strdup(""));
 }
 
 int special_vars(char **result, const char **str, int *start, int *index)
 {
-	char	*tmp;
-	int		flag = 0;
+	int		flag;
 
+	flag = 0;
 	if ((*str)[*index] == '$' && (*str)[*index + 1] == '0')
 	{
 		flag = 1;
-		tmp = strndup((*str) + (*start), (*index) - (*start));
-		*result = ft_strjoin(*result, tmp);
-		free(tmp);
+		take_previous(result, *str, *start, *index);
 		*result = ft_strjoin(*result, "bash");
 		(*index)++; //skip the symbol '$'
 		(*start) = (*index) + 1; // ++1 for start after '0'
@@ -54,19 +46,15 @@ int special_vars(char **result, const char **str, int *start, int *index)
 	else if ((*str)[*index] == '$' && (*str)[*index + 1] == '-')
 	{
 		flag = 1;
-		tmp = strndup((*str) + (*start), (*index) - (*start));
-		*result = ft_strjoin(*result, tmp);
-		free(tmp);
-		*result = ft_strjoin(*result, "himBHs");
+		take_previous(result, *str, *start, *index);
+		*result = ft_strjoin(*result, "himBH");
 		(*index)++; //skip the symbol '$'
-		(*start) = (*index) + 1; // ++1 for start after '0'
+		(*start) = (*index) + 1; // ++1 for start after '-'
 	}
 	else if ((*str)[*index] == '$' && (*str)[*index + 1] && isnum((*str)[*index + 1]))
 	{
 		flag = 2;
-		tmp = strndup((*str) + (*start), *index - (*start));
-		*result = ft_strjoin(*result, tmp);
-		free(tmp);
+		take_previous(result, *str, *start, *index);
 		(*index)++;
 		(*start) = (*index) + 1;
 	}
@@ -138,10 +126,11 @@ void take_previous(char **result, const char *word, int start, int i)
 	*result = ft_strjoin(*result, tmp);
 	free(tmp);
 }
-
+/*this func for the case when there is $$VAR
+	will join each two '$' and expand
+		just if there an single '$' */
 int double_$_cases(char **result,const char *word, int *i, int *start)
 {
-	// char	*tmp;
 	int		flag;
 
 	flag = 0;
@@ -193,29 +182,43 @@ int	quotes_cases(char **result,const char *word, int *i, int *start)
 	return (flag);
 }
 
+int	normal_var(char **result,const char *word, int *i, int *start)
+{
+	char	*tmp;
+	int		flag;
+
+	flag = 0;
+	if (word[(*i)] == '$' && word[(*i) + 1] != '$')
+	{
+		flag = 1;
+		take_previous(result, word, *start, (*i));
+		(*i)++;
+		tmp = expand_variable(word, i);
+		*result = ft_strjoin(*result, tmp);
+		free(tmp);
+		(*start) = (*i);
+	}
+	return (flag);
+}
 /*this func check the case of var, if it inside quotes or not...
 	and deppend on this it expand it or not*/
 char *handle_var(const char *word)
 {
-	char *result = strdup("");
-	char *tmp;
-	int i = 0, start = 0;
+	char	*result;
+	int		i; 
+	int		start;
 
+	i = 0;
+	start = 0;
+	result = strdup("");
 	while (word[i])
 	{
 		if (quotes_cases(&result, word, &i, &start))
 			continue;
-		 else if (word[i] == '$' && word[i + 1] != '$')
-		{
-			if (special_vars(&result, &word, &start, &i) != 0 && i++)
+		else if (word[i] == '$' && word[i + 1] != '$' && (special_vars(&result, &word, &start, &i) != 0 && i++))
 				continue;
-			take_previous(&result, word, start, i);
-			i++;
-			tmp = expand_variable(word, &i);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			start = i;
-		}
+		else if (normal_var(&result, word, &i, &start))
+			continue;
 		else if (double_$_cases(&result, word, &i, &start))
 			continue;
 		else
