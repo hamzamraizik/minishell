@@ -70,9 +70,6 @@ int	count_new_len(char *line, int old_len)
 
 void	re_tokenizing(t_list **head)
 {
-		
-		
-	// puts("*");
 	t_list	*tmp;
 
 	tmp = *head;
@@ -128,7 +125,6 @@ void remove_quotes(t_list **head) {
                 perror("malloc failed");
                 exit(EXIT_FAILURE);
             }
-
             // Copy the content while preserving inner quotes
             i = start;
             j = 0;
@@ -147,20 +143,19 @@ void remove_quotes(t_list **head) {
     }
 }
 
-
 void	parse_line(char *line, t_list	**head, int length)
 {
 	char	**new_line;
 
 	*head = NULL;
-	line = add_delimetre(line);
-	new_line = ft_new_split(line, '\0', length);
-	tokenizing(head, new_line);
-	re_tokenizing(head);
+	line = add_delimetre(line);// replace space with '\0' for splite
+	new_line = ft_new_split(line, '\0', length); // splite line with '\0'
+	tokenizing(head, new_line); // listing it into tokenz
+	re_tokenizing(head); // some tokenz type must modified
 	// free_line(new_line);
 	return ;
 }
-// void remove
+
 int main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -179,7 +174,7 @@ int main(int argc, char **argv, char **envp)
 			add_history(line);
 		if (check_if_empty(line) || first_syntax_check(line))
 			continue ;
-		new_line = add_spaces(line);
+		new_line = add_spaces(line);// add spaces before special symbols to splite it after
 		parse_line(new_line, &head, ft_strlen(new_line));
 		if (syntax_error(head) == 1 && !lstclear(head))
 			continue ;
