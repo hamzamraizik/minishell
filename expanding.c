@@ -240,6 +240,31 @@ int accepted_chars(t_list	*tmp)
 		return (0);
 }
 
+char	*handle_home_symbol(char *str)
+{
+	char	*result;
+	int		i;
+	int		start;
+
+	i = 0;
+	start = 0;
+	result = strdup("");
+	if (str && str[i] && str[i] == '~' && str[i + 1] == '/')
+	{
+		result = getenv("HOME");
+		result = ft_strjoin(result, "/");
+		start += 2;
+		while (str[i])
+			i++;
+		take_previous(&result, str, start, i);
+	}
+	else if (str && str[i] && str[i] == '~' && !str[i + 1])
+		result = getenv("HOME");
+	else
+		return(strdup(str));
+	return (result);
+}
+
 /*in this func will looping around all the tokenz and detect is the 
 	an var exist, if it then pass it to handle_var to expand
 					if it a valid var */
@@ -253,6 +278,12 @@ void expanding(t_list **head)
 	tmp = *head;
 	while (tmp)
 	{
+		if (tmp->content && ft_strchr((tmp->content), '~'))
+		{
+			tmp2 = tmp->content;
+			tmp->content = handle_home_symbol(tmp->content);
+			free(tmp2);
+		}
 		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$')
 			&& *(ft_strchr(tmp->content, '$') + 1) // there is an $ and after it not '\0'
 				&& (isalnum(*(ft_strchr(tmp->content, '$') + 1)) || accepted_chars(tmp))
