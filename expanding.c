@@ -69,13 +69,13 @@ char *handle_d_q_var(const char *str, int *index)
 	char *tmp;
 	int start = *index;
 
-	while (str[*index] && str[*index] != '"')
+	while (str && str[*index] && str[*index] != '"')
 	{
 		if (special_vars(&result, &str, &start, index) && (*index)++)
 			continue;
 		if (str[*index] == '$' && str[*index + 1] != '$'
 			&& !isnum(str[*index + 1]) && str[*index + 1] != '"')
-		{
+		{ 
 			take_previous(&result, str, start, (*index));
 			(*index)++;
 			tmp = expand_variable(str, index);
@@ -101,14 +101,12 @@ char *handle_d_q_var(const char *str, int *index)
 			the closed quotes */
 char *handle_s_q_var(const char *str, int *index)
 {
-	char *result;
-	int start;
+	char	*result;
+	int		start;
 
 	start = (*index);
 	while (str[*index] && str[*index] != '\'')
-	{
 		(*index)++;
-	}
 	result = strndup(str + start, *index - start);
 	(*index)++; // Skip the closing single quote
 	return (result);
@@ -159,17 +157,17 @@ int	quotes_cases(char **result,const char *word, int *i, int *start)
 	int		flag;
 
 	flag = 0;
-	if (word[*i] == '\'')
+	if (word && word[*i] == '\'')
 	{
 			take_previous(result, word, *start, *i);
-			*start = ++*i;//skip initial quotes
+			*start = ++(*i);//skip initial quotes
 			tmp = handle_s_q_var(word, i);
 			*result = ft_strjoin(*result, tmp);
 			free(tmp);
-			*start = *i;
+			*start = (*i);
 			flag = 1;
 	}
-	else if (word[*i] == '"')
+	else if (word && word[*i] == '"')
 	{
 			take_previous(result, word, *start, *i);
 			*start = ++(*i);
@@ -248,7 +246,6 @@ char	*handle_home_symbol(char *str)
 
 	i = 0;
 	start = 0;
-	result = strdup("");
 	if (str && str[i] && str[i] == '~' && str[i + 1] == '/')
 	{
 		result = getenv("HOME");

@@ -14,7 +14,7 @@ char	*add_spaces(char *line, int new_len)
 	new_line = (char *)malloc(sizeof(char) * (new_len + 1));
 	if (!new_line)
 		return (NULL);
-	while (line[args.i])
+	while (line && line[args.i])
 	{
 		args.is_quots = check_quotes(args.is_quots, line[args.i]);
 		if (line[args.i] && check_special(line[args.i]) && !args.is_quots)
@@ -45,27 +45,6 @@ int	count_char(char *line, char c)
 		if (line[i++] == c)
 			++count;
 	return (count);
-}
-
-char	*remove_char(char *line, char c)
-{
-	char	*str;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	str = malloc(ft_strlen(line) - count_char(line, c) + 1);
-	if (!str || !line)
-		return (NULL);
-	while (line && line[i])
-	{
-		if (line[i] == c)
-			i++;
-		else
-			str[j++] = line[i++];
-	}
-	return (free(line), str);
 }
 
 int	syntax_error(t_list *head)

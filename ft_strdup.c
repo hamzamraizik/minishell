@@ -6,7 +6,7 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 19:04:48 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/09 21:05:11 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/08/09 17:53:30 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*ft_strdup(const char *s1, int n)
 
 	len = n + 1;
 	s2 = malloc(len);
-	if (s1 == NULL)
+	if (!s1)
 		return (NULL);
 	if (s2 != NULL)
 	{

@@ -139,7 +139,7 @@ void	parse_line(char *line, t_list	**head, int length)
 	line = add_delimetre(line);// replace space with '\0' for splite
 	new_line = ft_new_split(line, '\0', length); // splite line with '\0'
 	tokenizing(head, new_line); // listing it into tokenz
-	// free_line(new_line);
+	free(new_line); // not freing substers because the same adresses uses in list
 	return ;
 }
 
@@ -165,7 +165,6 @@ int main(int argc, char **argv, char **envp)
 		if (syntax_error(head) == 1 && !lstclear(head))
 			continue ;
 		expanding(&head);
-		// remove_quotes(&head);
 		while(head != NULL)
 		{
 			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : 
@@ -174,7 +173,6 @@ int main(int argc, char **argv, char **envp)
 			head = head->next;
 		}
 		lstclear(head);
-		// free(line);
 		free(new_line);
 		// split_env(envp);
 	}
