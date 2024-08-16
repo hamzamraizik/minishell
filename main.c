@@ -180,7 +180,7 @@ int	main(int argc, char **argv, char **envp)
 		// 			head->type == 6 ? "OUT" : head->type == 12 ? "DELEMETRE" : "WORD");
 		// 	head = head->next;
 		// }
-		// lstclear(head);
+		lstclear(head);
 		free(new_line);
 	}
 }
