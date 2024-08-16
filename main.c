@@ -43,19 +43,19 @@ int	first_syntax_check(char *line)
 	while (line[i])
 		is_quotes = check_quotes(is_quotes, line[i++]);
 	if (is_quotes == 1 || is_quotes == 2)
-		return (printf("bash: syntax_error, quotes not closed\n"), 1);
+		return (printf("mini_hell: syntax_error, quotes not closed\n"), 1);
 	if (line && (line[0] == '|' || line[ft_strlen(line) - 1] == '|'))
-		return (printf("bash: syntax error near unexpected token `|'\n"), 1);
+		return (printf("mini_hell: syntax error near unexpected token `|'\n"), 1);
 	if (check_multi_pipes(line))
-		return (printf("bash: syntax error near unexpected token `|'\n"), 1);
+		return (printf("mini_hell: syntax error near unexpected token `|'\n"), 1);
 	if (in_out_check(line))
-		return (printf("bash: syntax error\n"), 1);
+		return (printf("mini_hell: syntax error\n"), 1);
 	return 0;
 }
 
 int	count_new_len(char *line, int old_len)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while(line[i])
@@ -65,70 +65,6 @@ int	count_new_len(char *line, int old_len)
 		i++;
 	}
 	return (old_len);
-}
-
-void remove_quotes(t_list **head)
-{
-    t_list	*tmp;
-    int		start, end, i, j;
-    int		is_quotes = 0;
-    char	*result;
-
-    tmp = *head;
-    while (tmp) {
-        if (strchr(tmp->content, '"') || strchr(tmp->content, '\'')) {
-            // Step 1: Find the first and last non-quote characters
-            start = 0;
-            end = strlen(tmp->content) - 1;
-
-            // Skip leading outer quotes
-            while (start <= end && (tmp->content[start] == '"' || tmp->content[start] == '\'')) {
-                is_quotes = check_quotes(is_quotes, tmp->content[start]);
-                if (is_quotes == 1 || is_quotes == 2) {
-                    while (start <= end && tmp->content[start] != (is_quotes == 1 ? '\'' : '"')) {
-                        start++;
-                    }
-                    if (start <= end) start++; // Skip the closing quote
-                } else {
-                    break;
-                }
-            }
-
-            // Skip trailing outer quotes
-            while (end >= start && (tmp->content[end] == '"' || tmp->content[end] == '\'')) {
-                is_quotes = check_quotes(is_quotes, tmp->content[end]);
-                if (is_quotes == 1 || is_quotes == 2) {
-                    while (end >= start && tmp->content[end] != (is_quotes == 1 ? '\'' : '"')) {
-                        end--;
-                    }
-                    if (end >= start) end--; // Skip the closing quote
-                } else {
-                    break;
-                }
-            }
-
-            // Allocate memory for the result string
-            result = malloc(end - start + 2); // +2 to include null terminator and possibly one character
-            if (!result) {
-                perror("malloc failed");
-                exit(EXIT_FAILURE);
-            }
-            // Copy the content while preserving inner quotes
-            i = start;
-            j = 0;
-            is_quotes = 0;
-            while (i <= end) {
-                is_quotes = check_quotes(is_quotes, tmp->content[i]);
-                result[j++] = tmp->content[i++];
-            }
-            result[j] = '\0';
-
-            // Update the list node with the new content
-            free(tmp->content);
-            tmp->content = result;
-        }
-        tmp = tmp->next;
-    }
 }
 
 void	parse_line(char *line, t_list	**head, int length)
@@ -143,12 +79,71 @@ void	parse_line(char *line, t_list	**head, int length)
 	return ;
 }
 
-int main(int argc, char **argv, char **envp)
+int count_cmds(t_list *head)
+{
+	int count;
+
+	count = 0;
+	while (head && head->type != PIPE)
+	{
+		count++;
+		head = head->next;
+	}
+	return (count);
+}
+
+char **fill_cmds_array(t_list *head)
+{
+	char	**cmds;
+	int		cmds_count;
+	t_list	*tmp;
+	int		i;
+
+	i = 0;
+	tmp = head;
+	cmds_count = count_cmds(head);
+	cmds = malloc(cmds_count + 1);
+	if (!cmds)
+		return (NULL);
+	while (tmp && tmp->type != PIPE)
+	{
+		cmds[i] = tmp->content;
+		tmp = tmp->next;
+		i++;
+	}
+	cmds[i] = NULL;
+	return (cmds);
+}
+
+t_cmd	*fill_cmds_list(t_list **head)
+{
+	t_cmd	*cmds;
+	t_list	*tmp;
+	t_cmd	*tmp_cmd;
+
+	tmp = *head;
+	while (tmp)
+	{
+		tmp_cmd = new_cmd_node();
+		tmp_cmd->cmd = fill_cmds_array(tmp);
+		while (tmp && tmp->type != PIPE)
+			tmp = tmp->next;
+		if (tmp && tmp->type == PIPE)
+			tmp = tmp->next;
+		cmd_add_back(&cmds, tmp_cmd);
+	}
+	return (cmds);
+}
+
+int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	char    *new_line;
 	t_list	*head;
+	t_cmd	*cmd_list;
+	int		i;
 
+	// i = 0;
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -165,15 +160,27 @@ int main(int argc, char **argv, char **envp)
 		if (syntax_error(head) == 1 && !lstclear(head))
 			continue ;
 		expanding(&head);
-		while(head != NULL)
+		cmd_list = fill_cmds_list(&head);
+		(void)cmd_list;
+		while (cmd_list)
 		{
-			printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : 
-				head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : 
-					head->type == 6 ? "OUT" : head->type == 12 ? "DELEMETRE" : "WORD");
-			head = head->next;
+			i = 0;
+			puts("____________________\n");
+			while(cmd_list->cmd[i])
+			{
+				printf("%s\n", cmd_list->cmd[i]);
+				i++;
+			}
+			cmd_list = cmd_list->next;
 		}
-		lstclear(head);
+		// while(head != NULL)
+		// {
+		// 	printf("%s =====>	%s\n", head->content, head->type == 1 ? "PIPE" : 
+		// 		head->type == 2 ? "HEREDOC" : head->type == 3 ? "APPEND" : head->type == 5 ? "IN" : 
+		// 			head->type == 6 ? "OUT" : head->type == 12 ? "DELEMETRE" : "WORD");
+		// 	head = head->next;
+		// }
+		// lstclear(head);
 		free(new_line);
-		// split_env(envp);
 	}
 }

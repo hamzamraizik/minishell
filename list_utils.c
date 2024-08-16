@@ -14,6 +14,33 @@ void    *creat_node(char *content, int type)
 	return (node);
 }
 
+t_cmd *new_cmd_node(void)
+{
+    t_cmd *new_node;
+
+    new_node = (t_cmd *)malloc(sizeof(t_cmd));
+    if (!new_node)
+        return (NULL);
+    new_node->cmd = NULL;
+    new_node->next = NULL;
+    return (new_node);
+}
+
+void	cmd_add_back(t_cmd **head, t_cmd *new)
+{
+	t_cmd	*last;
+
+	if (!*head)
+	{
+		*head = new;
+		return ;
+	}
+	last = *head;
+	while (last && last->next)
+		last = last->next;
+	last->next = new;
+}
+
 void    list_add_back(t_list **head, t_list *new)
 {
 	t_list *last;

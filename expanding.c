@@ -1,5 +1,5 @@
 #include "minishell.h"
- /*this func when will the var expanded, replaced with it
+ /*this func when a var expanded, replaced with it
  	real value in the env if it exist, if not exist
 		then it will replaced by '\0'*/
 char *expand_variable(const char *str, int *index)
