@@ -115,6 +115,63 @@ char **fill_cmds_array(t_list *head)
 	return (cmds);
 }
 
+int	count_type(t_list *head, int type)
+{
+	int	count;
+
+	count = 0;
+	while (head && head->type != PIPE)
+	{
+		if (head->type == type)
+			count++;
+		head = head->next;
+	}
+	return (count);
+}
+
+void	allocate_args(t_list *head ,t_files *files)
+{
+	files->infiles = malloc(count_type(head, IN) + 1);
+	if (!files->infiles)
+		return ;
+	files->outfiles = malloc(count_type(head, OUT) + 1);
+	if (!files->outfiles)
+		return ;
+	files->appendfiles = malloc(count_type(head, APPEND) + 1);
+	if (!files->appendfiles)
+		return ;
+	files->delemetre = malloc(count_type(head, DELEMETRE) + 1);
+	if (!files->delemetre)
+		return ;
+}
+
+t_files	fill_files(t_list *head)
+{
+	t_files	files;
+	int		index[4];
+
+	allocate_args(head, &files);
+	initial_ints(&index[0], &index[1], &index[2]);
+	index[3] = 0;
+	while (head && head->type != PIPE)
+	{
+		if (head->type == IN && head->next && head->next->type == WORD)
+			files.infiles[index[0]++] = head->next->content;
+		if (head->type == OUT && head->next && head->next->type == WORD)
+			files.outfiles[index[1]++] = head->next->content;
+		if (head->type == APPEND && head->next && head->next->type == WORD)
+			files.appendfiles[index[2]++] = head->next->content;
+		if (head->type == DELEMETRE)
+			files.delemetre[index[3]++] = head->content;
+		head = head->next;
+	}
+	files.infiles[index[0]] = NULL;
+	files.outfiles[index[1]] = NULL;
+	files.appendfiles[index[2]] = NULL;
+	files.delemetre[index[3]] = NULL;
+	return (files);
+}
+
 t_cmd	*fill_cmds_list(t_list **head)
 {
 	t_cmd	*cmds;
@@ -122,10 +179,12 @@ t_cmd	*fill_cmds_list(t_list **head)
 	t_cmd	*tmp_cmd;
 
 	tmp = *head;
+	cmds = NULL;
 	while (tmp)
 	{
 		tmp_cmd = new_cmd_node();
 		tmp_cmd->cmd = fill_cmds_array(tmp);
+		tmp_cmd->files = fill_files(tmp);
 		while (tmp && tmp->type != PIPE)
 			tmp = tmp->next;
 		if (tmp && tmp->type == PIPE)
@@ -161,16 +220,16 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		expanding(&head);
 		cmd_list = fill_cmds_list(&head);
-		(void)cmd_list;
+		// (void)cmd_list;
 		while (cmd_list)
 		{
 			i = 0;
-			puts("____________________\n");
 			while(cmd_list->cmd[i])
 			{
-				printf("%s\n", cmd_list->cmd[i]);
+				printf("COMMAND:  %s ----- INFILES: %s \n", cmd_list->cmd[i], cmd_list->files.infiles[i]);
 				i++;
 			}
+			puts("____________________\n");
 			cmd_list = cmd_list->next;
 		}
 		// while(head != NULL)
