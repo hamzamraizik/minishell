@@ -70,6 +70,7 @@ typedef struct s_cmd
 {
 	char			**cmd;
 	struct s_cmd	*next;
+	t_files			files;
 }		t_cmd;
 
 //__________________________Libft functions

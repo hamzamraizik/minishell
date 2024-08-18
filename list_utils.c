@@ -30,7 +30,9 @@ void	cmd_add_back(t_cmd **head, t_cmd *new)
 {
 	t_cmd	*last;
 
-	if (!*head)
+	if (!new)
+		return ;
+	if (!(*head))
 	{
 		*head = new;
 		return ;
