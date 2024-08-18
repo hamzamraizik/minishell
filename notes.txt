@@ -23,3 +23,13 @@ this case should handled :
 echo $-
 OUT -> himBHs *
 /
+
+
+/*
+$!   -> empty string
+$#   --> '0'
+~ when in the token just the symbol '~' and nothing else will expended
+and when there is '~\' will expended and join all before or after it.
+
+getenv("HOME") ==>> /Users/hmraizik 
+*/

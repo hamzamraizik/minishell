@@ -1,5 +1,23 @@
 #include "minishell.h"
 
+int	isnum(char c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	else
+		return (0);
+}
+
+void	initial_ints(int *i, int *j, int *k)
+{
+	if (i)
+		*i = 0;
+	if (j)
+		*j = 0;
+	if (k)
+		*k = 0;
+}
+
 int check_if_empty(char *line)
 {
 	int i;
@@ -14,36 +32,6 @@ int check_if_empty(char *line)
 	return (0);
 }
 
-void    *creat_node(char *content, int type)
-{
-	t_list *node;
-
-	node = (t_list *)malloc(sizeof(t_list));
-	if (!node)
-		return (NULL);
-	node->content = content;
-	node->type = type;
-	node->next = NULL;
-	node->prev = NULL;
-	return (node);
-}
-
-void    list_add_back(t_list **head, t_list *new)
-{
-	t_list *last;
-
-	if (!*head)
-	{
-		*head = new;
-		return ;
-	}
-	last = *head;
-	while (last->next)
-		last = last->next;
-	last->next = new;
-	new->prev = last;
-}
-
 int	check_special(char c)
 {
 	if (c == '|' || c == '<' || c == '>')
@@ -51,6 +39,7 @@ int	check_special(char c)
 	else
 		return (0);
 }
+
 int	check_quotes(int is_quotes, char c)
 {
 	if (is_quotes == 0 && c == '\'')
@@ -61,5 +50,5 @@ int	check_quotes(int is_quotes, char c)
 		is_quotes = 0;
 	else if (is_quotes == 2 && c == '\"')
 		is_quotes = 0;
-	return(is_quotes);
+	return (is_quotes);
 }
