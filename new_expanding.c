@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char *var_expand(const char *word)
+char *var_expand(  char *word)
 {
 	char *result = strdup("");
 	char *tmp;

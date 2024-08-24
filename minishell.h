@@ -74,16 +74,16 @@ typedef struct s_cmd
 }		t_cmd;
 
 //__________________________Libft functions
-char	*ft_strchr(const char *s, int c);
+char	*ft_strchr(  char *s, int c);
 int		isnum(char c);
-char	**ft_split(char const *s, char c);
-char	*ft_strdup(const char *s1, int n);
-char	*ft_strjoin(char const *s1, char const *s2);
-size_t	ft_strlen(const char *str);
-void	*ft_memcpy(void *dest, const void *src, size_t n);
-char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	**ft_split(char   *s, char c);
+char	*ft_strdup(  char *s1, int n);
+char	*ft_strjoin(char   *s1, char   *s2);
+size_t	ft_strlen(  char *str);
+void	*ft_memcpy(void *dest,   void *src, size_t n);
+char	*ft_substr(char   *s, unsigned int start, size_t len);
 //___________________________parsing functions
-char	**ft_new_split(const char *s, char c, size_t len);
+char	**ft_new_split(  char *s, char c, size_t len);
 void	tokenizing(t_list **head, char **line);
 char    *add_delimetre(char *line);
 char	*add_spaces(char *line, int new_len);
@@ -94,7 +94,7 @@ int     syntax_error(t_list *head);
 //_________________________linked list functions
 void	*creat_node(char *content, int type);
 void	list_add_back(t_list **head, t_list *new);
-void    *lstclear(t_list *tmp);
+void    lstclear(t_list **tmp);
 t_list  *get_last_node(t_list *head);
 void	cmd_add_back(t_cmd **head, t_cmd *new);
 t_cmd	*new_cmd_node(void);
@@ -106,6 +106,13 @@ void    s_with_d_Q(char *s);
 //_________________________expanding functions
 void    expanding(t_list **head);
 char    *is_var(char **env, char *var);
-void	take_previous(char **result, const char *word, int start, int i);
+void	take_previous(char **result,   char *word, int start, int i);
+//____________________cmds's list functions
+int		count_cmds(t_list *head);
+int		count_type(t_list *head, int type);
+void	allocate_args(t_list *head, t_files *files);
+t_files	fill_files(t_list *head);
+t_cmd	*fill_cmds_list(t_list **head);
+char	**fill_cmds_array(t_list *head);
 
 #endif // MINISHELL_H

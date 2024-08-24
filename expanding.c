@@ -2,7 +2,7 @@
  /*this func when a var expanded, replaced with it
  	real value in the env if it exist, if not exist
 		then it will replaced by '\0'*/
-char *expand_variable(const char *str, int *index)
+char *expand_variable(  char *str, int *index)
 {
 	char	*result;
 	int		Name_length;
@@ -26,11 +26,11 @@ char *expand_variable(const char *str, int *index)
 	}
 	name[var_len] = '\0';
 	if (getenv(name))// check if getenv doesn't return NULL
-		return ((result = strdup(getenv(name))));
-	return (strdup(""));
+		return (result = strdup(getenv(name)), free(name), result);
+	return (free(name), strdup(""));
 }
 
-int special_vars(char **result, const char **str, int *start, int *index)
+int special_vars(char **result,   char **str, int *start, int *index)
 {
 	int		flag;
 
@@ -63,7 +63,7 @@ int special_vars(char **result, const char **str, int *start, int *index)
 /*this func will handle the double quotes when there is an var inside it
 	by cancatenate while inside quotes until find a $ and then take 
 		the Var NAME after it, if it valid then will expand it */
-char *handle_d_q_var(const char *str, int *index)
+char *handle_d_q_var(  char *str, int *index)
 {
 	char *result = strdup("");
 	char *tmp;
@@ -99,7 +99,7 @@ char *handle_d_q_var(const char *str, int *index)
 /* this func work when there is an single quotes so it will
 	concatenate around the string until find 
 			the closed quotes */
-char *handle_s_q_var(const char *str, int *index)
+char *handle_s_q_var(  char *str, int *index)
 {
 	char	*result;
 	int		start;
@@ -116,18 +116,21 @@ char *handle_s_q_var(const char *str, int *index)
  			and join it to the result like : "hello$USER" -> it will join 
 					the word hello before expand $USER.
 */
-void take_previous(char **result, const char *word, int start, int i)
+void take_previous(char **result,   char *word, int start, int i)
 {
 	char	*tmp;
+	// char	*tmp2;
 
+	// tmp2 = *result;
 	tmp = strndup(word + start, i - start);
 	*result = ft_strjoin(*result, tmp);
 	free(tmp);
+	// free(tmp2);
 }
 /*this func for the case when there is $$VAR
 	will join each two '$' and expand
 		just if there an single '$' */
-int double_$_cases(char **result,const char *word, int *i, int *start)
+int double_$_cases(char **result,  char *word, int *i, int *start)
 {
 	int		flag;
 
@@ -151,7 +154,7 @@ int double_$_cases(char **result,const char *word, int *i, int *start)
 	return (flag);
 }
 
-int	quotes_cases(char **result,const char *word, int *i, int *start)
+int	quotes_cases(char **result,  char *word, int *i, int *start)
 {
 	char	*tmp;
 	int		flag;
@@ -180,10 +183,11 @@ int	quotes_cases(char **result,const char *word, int *i, int *start)
 	return (flag);
 }
 
-int	normal_var(char **result,const char *word, int *i, int *start)
+int	normal_var(char **result,  char *word, int *i, int *start)
 {
 	char	*tmp;
 	int		flag;
+	// char	*tmp2;
 
 	flag = 0;
 	if (word[(*i)] == '$' && word[(*i) + 1] != '$')
@@ -192,7 +196,9 @@ int	normal_var(char **result,const char *word, int *i, int *start)
 		take_previous(result, word, *start, (*i));
 		(*i)++;
 		tmp = expand_variable(word, i);
+		// tmp2 = *result;
 		*result = ft_strjoin(*result, tmp);
+		// free(tmp2);
 		free(tmp);
 		(*start) = (*i);
 	}
@@ -200,7 +206,7 @@ int	normal_var(char **result,const char *word, int *i, int *start)
 }
 /*this func check the case of var, if it inside quotes or not...
 	and deppend on this it expand it or not*/
-char *handle_var(const char *word)
+char *handle_var(  char *word)
 {
 	char	*result;
 	int		i; 

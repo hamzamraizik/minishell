@@ -1,9 +1,9 @@
 NAME = minishell
 CFILES = main.c utils1.c  ft_strlen.c  ft_strchr.c  ft_strjoin.c  ft_strdup.c \
  ft_memcpy.c  ft_substr.c ft_split.c new_split.c tokenizing.c utils2.c tkherbi9.c expanding.c \
- ft_env.c list_utils.c
+ ft_env.c list_utils.c cmds_list_func.c
 OFILES = $(CFILES:.c=.o)
-CFLAGS = -Wall -Wextra  -Werror -g
+CFLAGS = -Wall -Wextra  -Werror #-fsanitize=address -g
 LDFLAGS = -L/usr/lib/x86_64-linux-gnu -lreadline
 CC = gcc
 

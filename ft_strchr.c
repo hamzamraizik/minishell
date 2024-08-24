@@ -6,13 +6,13 @@
 /*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 15:20:43 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/19 19:26:45 by hmraizik         ###   ########.fr       */
+/*   Updated: 2024/08/24 22:52:49 by hmraizik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_strchr(  char *s, int c)
 {
 	int		i;
 	char	*str;

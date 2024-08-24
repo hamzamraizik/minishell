@@ -2,7 +2,7 @@
 
 void    *creat_node(char *content, int type)
 {
-	t_list *node;
+	t_list	*node;
 
 	node = (t_list *)malloc(sizeof(t_list));
 	if (!node)
@@ -22,6 +22,10 @@ t_cmd *new_cmd_node(void)
     if (!new_node)
         return (NULL);
     new_node->cmd = NULL;
+	new_node->files.infiles = NULL;
+	new_node->files.outfiles = NULL;
+	new_node->files.appendfiles = NULL;
+	new_node->files.delemetre = NULL;
     new_node->next = NULL;
     return (new_node);
 }
@@ -58,17 +62,31 @@ void    list_add_back(t_list **head, t_list *new)
 	last->next = new;
 	new->prev = last;
 }
-
-void	*lstclear(t_list *tmp)
+void	clear_lst_content(t_list **tmp)
 {
-	t_list *tmp2;
-	while (tmp)
+	t_list	*tmp2;
+
+	while (*tmp)
 	{
-		tmp2 = tmp;
-		tmp = tmp->next;
+		tmp2 = *tmp;
+		*tmp = ((*tmp)->next);
+		free(tmp2->content);
 		free(tmp2);
 	}
-	return (NULL);
+	return ;
+}
+void	lstclear(t_list **tmp)
+{
+	t_list	*tmp2;
+
+	clear_lst_content(tmp);
+	while (*tmp)
+	{
+		tmp2 = *tmp;
+		*tmp = ((*tmp)->next);
+		free(tmp2);
+	}
+	return ;
 }
 
 t_list  *get_last_node(t_list *head)

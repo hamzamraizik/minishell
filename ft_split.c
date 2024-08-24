@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 13:44:52 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/26 14:47:36 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/08/24 22:52:47 by hmraizik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	count_word(const char *s, char c)
+static int	count_word(  char *s, char c)
 {
 	int	count;
 	int	c_fond;
@@ -44,7 +44,7 @@ static char	**free_substrs(char **substrs)
 	return (0);
 }
 
-static int	word_len(char const *s, char c)
+static int	word_len(char   *s, char c)
 {
 	int	count;
 
@@ -54,7 +54,7 @@ static int	word_len(char const *s, char c)
 	return (count);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(char   *s, char c)
 {
 	char	**substrs;
 	int		i;

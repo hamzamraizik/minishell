@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 19:40:12 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/13 22:44:08 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/08/24 22:52:52 by hmraizik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char   *s, unsigned int start, size_t len)
 {
 	char	*substr;
 	size_t	i;

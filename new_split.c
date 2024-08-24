@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int	count_word(const char *s, char c, size_t len)
+static int	count_word(  char *s, char c, size_t len)
 {
 	int		count;
 	int		c_fond;
@@ -34,7 +34,7 @@ static char	**free_substrs(char **substrs)
 	return (0);
 }
 
-static int	word_len(const char *s, char c, size_t len)
+static int	word_len(  char *s, char c, size_t len)
 {
 	int		count;
 	size_t	i;
@@ -49,7 +49,7 @@ static int	word_len(const char *s, char c, size_t len)
 	return (count);
 }
 
-char	**ft_new_split(const char *s, char c, size_t len)
+char	**ft_new_split(  char *s, char c, size_t len)
 {
 	char	**substrs;
 	int		i;

@@ -11,7 +11,7 @@ char	*add_spaces(char *line, int new_len)
 	t_args			args;
 
 	initial_ints(&(args.i), &(args.j), &(args.is_quots));
-	new_line = (char *)malloc(sizeof(char) * (new_len + 1));
+	new_line = malloc(sizeof(char) * (new_len + 1));
 	if (!new_line)
 		return (NULL);
 	while (line && line[args.i])
@@ -29,7 +29,8 @@ char	*add_spaces(char *line, int new_len)
 		else
 			new_line[args.j++] = line[args.i++];
 	}
-	return (new_line[args.j] = '\0', free(line), new_line);
+	new_line[args.j] = '\0';
+	return (new_line);
 }
 
 int	count_char(char *line, char c)
