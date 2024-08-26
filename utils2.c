@@ -11,7 +11,7 @@ char	*add_spaces(char *line, int new_len)
 	t_args			args;
 
 	initial_ints(&(args.i), &(args.j), &(args.is_quots));
-	new_line = malloc(sizeof(char) * (new_len + 1));
+	new_line = malloc(sizeof(char) * (new_len));
 	if (!new_line)
 		return (NULL);
 	while (line && line[args.i])
@@ -63,6 +63,9 @@ int	syntax_error(t_list *head)
 			return (1);
 		else if (tmp->next && tmp->type == OUT && tmp->next->type != WORD)
 			return (1);
+		// else if (tmp->type != WORD && tmp->next == NULL)
+		// 	return (1);
+		// printf("content: %s\n", tmp->content);
 		tmp = tmp->next;
 	}
 	return (0);

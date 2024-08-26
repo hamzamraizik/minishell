@@ -71,6 +71,7 @@ void	clear_lst_content(t_list **tmp)
 		tmp2 = *tmp;
 		*tmp = ((*tmp)->next);
 		free(tmp2->content);
+		tmp2->content = NULL;
 		free(tmp2);
 	}
 	return ;
@@ -80,11 +81,12 @@ void	lstclear(t_list **tmp)
 	t_list	*tmp2;
 
 	clear_lst_content(tmp);
-	while (*tmp)
+	while (tmp && *tmp)
 	{
 		tmp2 = *tmp;
 		*tmp = ((*tmp)->next);
 		free(tmp2);
+		tmp2 = NULL;
 	}
 	return ;
 }

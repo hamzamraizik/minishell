@@ -1,6 +1,6 @@
 NAME = minishell
-CFILES = main.c utils1.c  ft_strlen.c  ft_strchr.c  ft_strjoin.c  ft_strdup.c \
- ft_memcpy.c  ft_substr.c ft_split.c new_split.c tokenizing.c utils2.c tkherbi9.c expanding.c \
+CFILES = main.c utils1.c  \
+ new_split.c tokenizing.c utils2.c tkherbi9.c expanding.c \
  ft_env.c list_utils.c cmds_list_func.c
 OFILES = $(CFILES:.c=.o)
 CFLAGS = -Wall -Wextra  -Werror #-fsanitize=address -g
@@ -10,10 +10,10 @@ CC = gcc
 all: $(NAME)
 
 %.o: %.c minishell.h
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< 
 
 $(NAME): $(OFILES)
-	$(CC) $(CFLAGS) $(OFILES) $(LDFLAGS)  -o $(NAME)
+	$(CC) $(CFLAGS) $(OFILES) $(LDFLAGS)  -o $(NAME) libft.a
 
 clean:
 	rm *.o

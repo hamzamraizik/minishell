@@ -60,13 +60,13 @@ int	count_new_len(char *line, int old_len)
 	i = 0;
 	while(line[i])
 	{
-		if(check_special(line[i]) && line[i + 1] != ' ')
+		if (check_special(line[i]) && line[i + 1] != ' ')
 				old_len += 2;
 		i++;
 	}
 	return (old_len);
 }
-void	free_substrs(char **substrs)
+char	**free_substrs(char **substrs)
 {
 	int	i;
 
@@ -75,7 +75,7 @@ void	free_substrs(char **substrs)
 		free(substrs[i++]);
 	if (substrs)
 		free(substrs);
-	return ;
+	return (NULL);
 }
 
 void	parse_line(char *line, t_list	**head, int length)
@@ -84,6 +84,7 @@ void	parse_line(char *line, t_list	**head, int length)
 
 	*head = NULL;
 	new_line = NULL;
+	length = ft_strlen(line);
 	line = add_delimetre(line);// replace spaces with '\0' for splite
 	new_line = ft_new_split(line, '\0', length); // splite line with '\0'
 	tokenizing(head, new_line); // listing it into tokenz
@@ -101,6 +102,11 @@ void	clear_cmds_list(t_cmd **cmd_list)
 	{
 		tmp = head;
 		head = (head)->next;
+		free(tmp->cmd);
+		free(tmp->files.infiles);
+		free(tmp->files.outfiles);
+		free(tmp->files.appendfiles);
+		free(tmp->files.delemetre);
 		free(tmp);
 	}
 }
@@ -110,7 +116,7 @@ int	main(int argc, char **argv, char **envp)
 	char	*line;
 	char    *new_line;
 	t_list	*head;
-	t_cmd	*cmd_list;
+	// t_cmd	*cmd_list;
 	int		i;
 
 	i = 0;
@@ -123,54 +129,54 @@ int	main(int argc, char **argv, char **envp)
 		 line = readline("Minishell -> ");
 		if (!line)
 			return (1);
+		// if (check_if_empty(line) || first_syntax_check(line))
+		// {
+		// 	free(line);
+		// 	continue ;
+		// }
 		 if (*line)
 			add_history(line);
-		if (check_if_empty(line) || first_syntax_check(line))
-		{
-			free(line);
-			continue ;
-		}
 		new_line = add_spaces(line, count_new_len(line, ft_strlen(line)));// add spaces before special symbols to split it after
 		parse_line(new_line, &head, ft_strlen(new_line));
 		if (syntax_error(head) == 1)
 		{
+			printf("mini_hell: syntax error\n");
 			lstclear(&head);
 			continue ;
 		}
 		expanding(&head);
-		cmd_list = fill_cmds_list(&head);
-		// (void)cmd_list;
-		t_cmd *tmpp = cmd_list;
-		while (tmpp)
-		{
-			i = 0;
-			while(tmpp->cmd[i])
-			{
-				printf("COMMAND:  %s ----- INFILES: %s \n", tmpp->cmd[i], tmpp->files.infiles[i]);
-				i++;
-			}
-			puts("____________________\n");
-			tmpp = tmpp->next;
-		}
+		// cmd_list = fill_cmds_list(&head);
+		// t_cmd *tmpp = cmd_list;
+		// while (tmpp)
+		// {
+		// 	i = 0;
+		// 	while(tmpp->cmd[i])
+		// 	{
+		// 		printf("COMMAND:  %s ----- INFILES: %s \n", tmpp->cmd[i], tmpp->files.infiles[i]);
+		// 		i++;
+		// 	}
+		// 	puts("____________________\n");
+		// 	tmpp = tmpp->next;
+		// }
 		t_list *tmp  = head;
 		while (tmp)
 		{
 			printf("%s =====>	%s\n", tmp->content, tmp->type == 1 ? "PIPE" : 
 				tmp->type == 2 ? "HEREDOC" : tmp->type == 3 ? "APPEND" : tmp->type == 5 ? "IN" : 
-					tmp->type == 6 ? "OUT" : tmp->type == 12 ? "DELEMETRE" : "WORD");
+					tmp->type == 6 ? "OUT" : tmp->type == 12 ? "DELEMETRE" : tmp->type == 4 ? "VAR" : "WORD");
 			tmp = tmp->next;
 		}
-		tmp = head;
-		while (tmp)
-		{
-			printf("\n\nnode ------------------->%p\n\n", tmp->content);
-			tmp = tmp->next;
-		}
-		printf("\n\n%p\n\n", line);
-		printf("\n\n%p\n\n", new_line);
+		// tmp = head;
+		// while (tmp)
+		// {
+		// 	printf("\n\nnode ------------------->%p\n\n", tmp->content);
+		// 	tmp = tmp->next;
+		// }
+		// printf("\n\n%p\n\n", line);
+		// printf("\n\n%p\n\n", new_line);
 		free(line);
 		free(new_line);
 		lstclear(&head);
-		clear_cmds_list(&cmd_list);
+		// clear_cmds_list(&cmd_list);
 	}
 }

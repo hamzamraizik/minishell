@@ -2,7 +2,7 @@
 
 char *var_expand(  char *word)
 {
-	char *result = strdup("");
+	char *result = ft_strdup("");
 	char *tmp;
 	int i = 0, start = 0, is_quotes = 0;
 

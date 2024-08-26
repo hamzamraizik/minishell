@@ -26,8 +26,8 @@ char *expand_variable(  char *str, int *index)
 	}
 	name[var_len] = '\0';
 	if (getenv(name))// check if getenv doesn't return NULL
-		return (result = strdup(getenv(name)), free(name), result);
-	return (free(name), strdup(""));
+		return (result = ft_strdup(getenv(name)), free(name), result);
+	return (free(name), ft_strdup(""));
 }
 
 int special_vars(char **result,   char **str, int *start, int *index)
@@ -65,7 +65,7 @@ int special_vars(char **result,   char **str, int *start, int *index)
 		the Var NAME after it, if it valid then will expand it */
 char *handle_d_q_var(  char *str, int *index)
 {
-	char *result = strdup("");
+	char *result = ft_strdup("");
 	char *tmp;
 	int start = *index;
 
@@ -75,7 +75,7 @@ char *handle_d_q_var(  char *str, int *index)
 			continue;
 		if (str[*index] == '$' && str[*index + 1] != '$'
 			&& !isnum(str[*index + 1]) && str[*index + 1] != '"')
-		{ 
+		{
 			take_previous(&result, str, start, (*index));
 			(*index)++;
 			tmp = expand_variable(str, index);
@@ -121,7 +121,6 @@ void take_previous(char **result,   char *word, int start, int i)
 	char	*tmp;
 	// char	*tmp2;
 
-	// tmp2 = *result;
 	tmp = strndup(word + start, i - start);
 	*result = ft_strjoin(*result, tmp);
 	free(tmp);
@@ -183,22 +182,46 @@ int	quotes_cases(char **result,  char *word, int *i, int *start)
 	return (flag);
 }
 
+char	*remove_var_spaces(char *tmp)
+{
+	char	**splited;
+	char	*result;
+	char	*tmp2;
+	int		i;
+
+	i = 0;
+	splited = ft_split(tmp, ' ');
+	result = ft_strdup("");
+	while (splited && splited[i])
+	{
+		result = ft_strjoin(result, " ");
+		result = ft_strjoin(result, splited[i]);
+		i++;
+	}
+	tmp2 = result;
+	result = ft_strtrim(result, " ");
+	free(tmp2);
+	free_substrs(splited);
+	if (tmp)
+		free(tmp);
+	return (result);
+}
+
 int	normal_var(char **result,  char *word, int *i, int *start)
 {
 	char	*tmp;
 	int		flag;
-	// char	*tmp2;
 
 	flag = 0;
-	if (word[(*i)] == '$' && word[(*i) + 1] != '$')
+	if (word[(*i)] == '$' && word[(*i) + 1] != '$' && isalnum(word[(*i) + 1]))
 	{
 		flag = 1;
 		take_previous(result, word, *start, (*i));
 		(*i)++;
 		tmp = expand_variable(word, i);
-		// tmp2 = *result;
+		// remove multi spaces
+		tmp = remove_var_spaces(tmp);
 		*result = ft_strjoin(*result, tmp);
-		// free(tmp2);
 		free(tmp);
 		(*start) = (*i);
 	}
@@ -214,7 +237,7 @@ char *handle_var(  char *word)
 
 	i = 0;
 	start = 0;
-	result = strdup("");
+	result = ft_strdup("");
 	while (word[i])
 	{
 		if (quotes_cases(&result, word, &i, &start))
@@ -264,7 +287,7 @@ char	*handle_home_symbol(char *str)
 	else if (str && str[i] && str[i] == '~' && !str[i + 1])
 		result = getenv("HOME");
 	else
-		return(strdup(str));
+		return(ft_strdup(str));
 	return (result);
 }
 

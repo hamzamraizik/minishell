@@ -5,7 +5,12 @@ void	tokenizing(t_list **head, char **line)
 	int	i;
 
 	i = 0;
-	while (line[i])
+	// while (line[i])
+	// {
+	// 	printf("line[%d]: %s\n", i, line[i]);
+	// 	i++;
+	// }
+	while (line && line[i])
 	{
 		if (strncmp(line[i], "|", 1) == 0)
 			list_add_back(head, creat_node(line[i], PIPE));

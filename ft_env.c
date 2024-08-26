@@ -16,7 +16,7 @@ char	*is_var(char **env, char *var)
 		if (strcmp(line[0], var) == 0)
 		{
 			var = line[1];
-			result = strdup(var);
+			result = ft_strdup(var);
 			free(line[0]);
 			free(line[1]);
 			free(line);
@@ -24,5 +24,5 @@ char	*is_var(char **env, char *var)
 		}
 		i++;
 	}
-	return ((result = strdup("")));
+	return ((result = ft_strdup("")));
 }
