@@ -2,10 +2,13 @@
 
 static int	count_word(const char *s, char c, size_t len)
 {
-	int	count = 0;
-	int	c_fond = 0;
-	size_t i = 0;
+	int		count;
+	int		c_fond;
+	size_t	i;
 
+	count  = 0;
+	c_fond = 0;
+	i = 0;
 	while (i < len)
 	{
 		if (s[i] == c)
@@ -22,8 +25,9 @@ static int	count_word(const char *s, char c, size_t len)
 
 static char	**free_substrs(char **substrs)
 {
-	int	i = 0;
+	int	i;
 
+	i = 0;
 	while (substrs[i])
 		free(substrs[i++]);
 	free(substrs);
@@ -32,9 +36,11 @@ static char	**free_substrs(char **substrs)
 
 static int	word_len(const char *s, char c, size_t len)
 {
-	int	count = 0;
-	size_t i = 0;
+	int		count;
+	size_t	i;
 
+	i = 0;
+	count = 0;
 	while (i < len && s[i] != c)
 	{
 		count++;
@@ -46,13 +52,14 @@ static int	word_len(const char *s, char c, size_t len)
 char	**ft_new_split(const char *s, char c, size_t len)
 {
 	char	**substrs;
-	int		i = 0;
+	int		i;
 	int		word_length;
-	size_t  j = 0;
+	size_t  j;
 
 	if (!s)
-		return (0);
-
+		return (NULL);
+	i = 0;
+	j = 0;
 	substrs = (char **)malloc((count_word(s, c, len) + 1) * sizeof(char *));
 	if (!substrs)
 		return (NULL);
@@ -69,7 +76,5 @@ char	**ft_new_split(const char *s, char c, size_t len)
 			j += word_length;
 		}
 	}
-
-	substrs[i] = 0;
-	return (substrs);
+	return (substrs[i] = NULL, substrs);
 }

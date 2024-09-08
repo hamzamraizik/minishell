@@ -23,6 +23,14 @@
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"
 
+
+typedef struct s_args
+{
+	int				i;
+	int				j;
+	int				is_quots;
+}		t_args;
+
 typedef enum e_tokens
 {
 	PIPE	= 1,
@@ -43,13 +51,28 @@ typedef struct s_list
 	struct	s_list	*prev;
 }   t_list;
 
-typedef struct s_env
+// typedef struct s_env
+// {
+// 	char    *line;
+// 	char    *tab;
+// 	char    *key;
+// 	char    *value;
+// }           t_env;
+typedef struct s_files
 {
-	char    *line;
-	char    *tab;
-	char    *key;
-	char    *value;
-}           t_env;
+	char	**infiles;
+	char	**outfiles;
+	char	**appendfiles;
+	char	**delemetre;
+}		t_files;
+
+typedef struct s_cmd
+{
+	char			**cmd;
+	struct s_cmd	*next;
+	t_files			files;
+}		t_cmd;
+
 //__________________________Libft functions
 char	*ft_strchr(const char *s, int c);
 int		isnum(char c);
@@ -63,21 +86,24 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	**ft_new_split(const char *s, char c, size_t len);
 void	tokenizing(t_list **head, char **line);
 char    *add_delimetre(char *line);
-char    *add_spaces(char *line);
+char	*add_spaces(char *line, int new_len);
 int     count_char(char *line, char c);
 int     count_new_len(char *line, int old_len);
-char	*remove_char(char *line, char c);
+void	initial_ints(int *i, int *j, int *k);
 int     syntax_error(t_list *head);
 //_________________________linked list functions
 void	*creat_node(char *content, int type);
 void	list_add_back(t_list **head, t_list *new);
 void    *lstclear(t_list *tmp);
+t_list  *get_last_node(t_list *head);
+void	cmd_add_back(t_cmd **head, t_cmd *new);
+t_cmd	*new_cmd_node(void);
 //___________________________check functions
 int		check_if_empty(char *line);
 int     check_special(char c);
 int     check_quotes(int is_quotes, char c);
 void    s_with_d_Q(char *s);
-// expanding functions
+//_________________________expanding functions
 void    expanding(t_list **head);
 char    *is_var(char **env, char *var);
 void	take_previous(char **result, const char *word, int start, int i);

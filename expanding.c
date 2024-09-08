@@ -1,52 +1,44 @@
 #include "minishell.h"
- /*this func when will the var expanded, replaced with it
+ /*this func when a var expanded, replaced with it
  	real value in the env if it exist, if not exist
 		then it will replaced by '\0'*/
 char *expand_variable(const char *str, int *index)
 {
-	char *result;
-	int Name_length;
-	int var_len;
-	char *name;
-	int i = *index;
+	char	*result;
+	int		Name_length;
+	int		var_len;
+	char	*name;
+	int		i;
 
-	Name_length = var_len = 0;
+	i = *index;
+	initial_ints(&Name_length, &var_len, NULL);
 	result = NULL;
-	while (str[i] && str[i] != ' ' && (isalnum(str[i]) || str[i] == '_'))
-	{
+	while (str[i] && str[i] != ' ' && (isalnum(str[i]) || str[i] == '_') && i++)
 		Name_length++;
-		i++;
-	}
 	name = malloc(Name_length + 1);
 	if (!name)
 		return (printf("malloc failed!\n"), NULL);
-	while (str[*index] && str[*index] != ' ' && str[*index] != '"' 
-			&& (isalnum(str[*index]) || str[*index] == '_'))
+	while (isalnum(str[*index]) || str[*index] == '_')
 	{
 		name[var_len] = str[*index];
 		var_len++;
 		(*index)++;
 	}
 	name[var_len] = '\0';
-	name = getenv(name);
-	if (name)
-		result = strdup(name);
-	else
-		result = strdup("");
-	return (result);
+	if (getenv(name))// check if getenv doesn't return NULL
+		return ((result = strdup(getenv(name))));
+	return (strdup(""));
 }
 
 int special_vars(char **result, const char **str, int *start, int *index)
 {
-	char	*tmp;
-	int		flag = 0;
+	int		flag;
 
+	flag = 0;
 	if ((*str)[*index] == '$' && (*str)[*index + 1] == '0')
 	{
 		flag = 1;
-		tmp = strndup((*str) + (*start), (*index) - (*start));
-		*result = ft_strjoin(*result, tmp);
-		free(tmp);
+		take_previous(result, *str, *start, *index);
 		*result = ft_strjoin(*result, "bash");
 		(*index)++; //skip the symbol '$'
 		(*start) = (*index) + 1; // ++1 for start after '0'
@@ -54,19 +46,15 @@ int special_vars(char **result, const char **str, int *start, int *index)
 	else if ((*str)[*index] == '$' && (*str)[*index + 1] == '-')
 	{
 		flag = 1;
-		tmp = strndup((*str) + (*start), (*index) - (*start));
-		*result = ft_strjoin(*result, tmp);
-		free(tmp);
-		*result = ft_strjoin(*result, "himBHs");
+		take_previous(result, *str, *start, *index);
+		*result = ft_strjoin(*result, "himBH");
 		(*index)++; //skip the symbol '$'
-		(*start) = (*index) + 1; // ++1 for start after '0'
+		(*start) = (*index) + 1; // ++1 for start after '-'
 	}
 	else if ((*str)[*index] == '$' && (*str)[*index + 1] && isnum((*str)[*index + 1]))
 	{
 		flag = 2;
-		tmp = strndup((*str) + (*start), *index - (*start));
-		*result = ft_strjoin(*result, tmp);
-		free(tmp);
+		take_previous(result, *str, *start, *index);
 		(*index)++;
 		(*start) = (*index) + 1;
 	}
@@ -81,13 +69,13 @@ char *handle_d_q_var(const char *str, int *index)
 	char *tmp;
 	int start = *index;
 
-	while (str[*index] && str[*index] != '"')
+	while (str && str[*index] && str[*index] != '"')
 	{
 		if (special_vars(&result, &str, &start, index) && (*index)++)
 			continue;
 		if (str[*index] == '$' && str[*index + 1] != '$'
 			&& !isnum(str[*index + 1]) && str[*index + 1] != '"')
-		{
+		{ 
 			take_previous(&result, str, start, (*index));
 			(*index)++;
 			tmp = expand_variable(str, index);
@@ -113,14 +101,12 @@ char *handle_d_q_var(const char *str, int *index)
 			the closed quotes */
 char *handle_s_q_var(const char *str, int *index)
 {
-	char *result;
-	int start;
+	char	*result;
+	int		start;
 
 	start = (*index);
 	while (str[*index] && str[*index] != '\'')
-	{
 		(*index)++;
-	}
 	result = strndup(str + start, *index - start);
 	(*index)++; // Skip the closing single quote
 	return (result);
@@ -138,60 +124,101 @@ void take_previous(char **result, const char *word, int start, int i)
 	*result = ft_strjoin(*result, tmp);
 	free(tmp);
 }
+/*this func for the case when there is $$VAR
+	will join each two '$' and expand
+		just if there an single '$' */
+int double_$_cases(char **result,const char *word, int *i, int *start)
+{
+	int		flag;
 
+	flag = 0;
+	if (word[(*i)] == '$' && (word[(*i) + 1] == '$'
+			|| word[(*i) + 1] == '"' || word[(*i) + 1] == '\''))
+	{
+		if (word[(*i) + 1] == '$')
+		{
+			(*i) += 2;
+			take_previous(result, word, (*start), (*i));
+		}
+		else
+		{
+			take_previous(result, word, (*start), (*i));
+			++(*i);
+		}
+		(*start) = *i;
+		flag = 1;
+	}
+	return (flag);
+}
+
+int	quotes_cases(char **result,const char *word, int *i, int *start)
+{
+	char	*tmp;
+	int		flag;
+
+	flag = 0;
+	if (word && word[*i] == '\'')
+	{
+			take_previous(result, word, *start, *i);
+			*start = ++(*i);//skip initial quotes
+			tmp = handle_s_q_var(word, i);
+			*result = ft_strjoin(*result, tmp);
+			free(tmp);
+			*start = (*i);
+			flag = 1;
+	}
+	else if (word && word[*i] == '"')
+	{
+			take_previous(result, word, *start, *i);
+			*start = ++(*i);
+			tmp = handle_d_q_var(word, i);
+			*result = ft_strjoin(*result, tmp);
+			free(tmp);
+			*start = *i;
+			flag = 2;
+	}
+	return (flag);
+}
+
+int	normal_var(char **result,const char *word, int *i, int *start)
+{
+	char	*tmp;
+	int		flag;
+
+	flag = 0;
+	if (word[(*i)] == '$' && word[(*i) + 1] != '$')
+	{
+		flag = 1;
+		take_previous(result, word, *start, (*i));
+		(*i)++;
+		tmp = expand_variable(word, i);
+		*result = ft_strjoin(*result, tmp);
+		free(tmp);
+		(*start) = (*i);
+	}
+	return (flag);
+}
 /*this func check the case of var, if it inside quotes or not...
 	and deppend on this it expand it or not*/
 char *handle_var(const char *word)
 {
-	char *result = strdup("");
-	char *tmp;
-	int i = 0, start = 0;
+	char	*result;
+	int		i; 
+	int		start;
 
+	i = 0;
+	start = 0;
+	result = strdup("");
 	while (word[i])
 	{
-		if (word[i] == '\'') {
-			take_previous(&result, word, start, i);
-			start = ++i;//skip initial quotes
-			tmp = handle_s_q_var(word, &i);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			start = i;
-		}
-		else if (word[i] == '"')
-		{
-			take_previous(&result, word, start, i);
-			start = ++i;
-			tmp = handle_d_q_var(word, &i);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			start = i;
-		}
-		else if (word[i] == '$' && word[i + 1] != '$')
-		{
-			if (special_vars(&result, &word, &start, &i) != 0 && i++)
+		if (quotes_cases(&result, word, &i, &start))
+			continue;
+		else if (word[i] == '$' && word[i + 1] != '$' && (special_vars(&result, &word, &start, &i) != 0 && i++))
 				continue;
-			take_previous(&result, word, start, i);
-			i++;
-			tmp = expand_variable(word, &i);
-			result = ft_strjoin(result, tmp);
-			free(tmp);
-			start = i;
-		}
-		else if (word[i] == '$' && (word[i + 1] == '$' 
-			|| word[i + 1] == '"' || word[i + 1] == '"'))
-		{
-			if (word[i + 1] == '$')
-			{
-				i += 2;
-				take_previous(&result, word, start, i);
-			}
-			else
-			{
-				take_previous(&result, word, start, i);
-				++i;
-			}
-			start = i;
-		}
+		else if (normal_var(&result, word, &i, &start))
+			continue;
+		else if (double_$_cases(&result, word, &i, &start))
+			continue;
 		else
 			i++;
 	}
@@ -199,11 +226,45 @@ char *handle_var(const char *word)
 	return (result);
 }
 
+int accepted_chars(t_list	*tmp)
+{
+	if (*(ft_strchr(tmp->content, '$') + 1) == '$'// for multi dollar
+				|| *(ft_strchr(tmp->content, '$') + 1) == '_'// for underscore
+				|| *(ft_strchr(tmp->content, '$') + 1) == '-'
+				|| *(ft_strchr(tmp->content, '$') + 1) == '"'//for double quotes
+				|| *(ft_strchr(tmp->content, '$') + 1) == '\'')//for single quotes)
+			return (1);
+	else
+		return (0);
+}
+
+char	*handle_home_symbol(char *str)
+{
+	char	*result;
+	int		i;
+	int		start;
+
+	i = 0;
+	start = 0;
+	if (str && str[i] && str[i] == '~' && str[i + 1] == '/')
+	{
+		result = getenv("HOME");
+		result = ft_strjoin(result, "/");
+		start += 2;
+		while (str[i])
+			i++;
+		take_previous(&result, str, start, i);
+	}
+	else if (str && str[i] && str[i] == '~' && !str[i + 1])
+		result = getenv("HOME");
+	else
+		return(strdup(str));
+	return (result);
+}
+
 /*in this func will looping around all the tokenz and detect is the 
 	an var exist, if it then pass it to handle_var to expand
-		if it a valid var
-*/
-
+					if it a valid var */
 void expanding(t_list **head)
 {
 	t_list	*tmp;
@@ -214,14 +275,15 @@ void expanding(t_list **head)
 	tmp = *head;
 	while (tmp)
 	{
+		if (tmp->content && ft_strchr((tmp->content), '~'))
+		{
+			tmp2 = tmp->content;
+			tmp->content = handle_home_symbol(tmp->content);
+			free(tmp2);
+		}
 		if (tmp->content && tmp->type == WORD && ft_strchr(tmp->content, '$')
 			&& *(ft_strchr(tmp->content, '$') + 1) // there is an $ and after it not '\0'
-				&& (isalnum(*(ft_strchr(tmp->content, '$') + 1))
-				|| *(ft_strchr(tmp->content, '$') + 1) == '$'// for multi dollar
-				|| *(ft_strchr(tmp->content, '$') + 1) == '_'// for underscore
-				|| *(ft_strchr(tmp->content, '$') + 1) == '-'
-				|| *(ft_strchr(tmp->content, '$') + 1) == '"'//for double quotes
-				|| *(ft_strchr(tmp->content, '$') + 1) == '\'')//for single quotes
+				&& (isalnum(*(ft_strchr(tmp->content, '$') + 1)) || accepted_chars(tmp))
 				&& tmp->type != DELEMETRE)
 		{
 			tmp2 = tmp->content;
