@@ -52,6 +52,7 @@ typedef struct s_list
 	struct	s_list	*prev;
 }   t_list;
 
+
 // typedef struct s_env
 // {
 // 	char    *line;
@@ -75,20 +76,12 @@ typedef struct s_cmd
 }		t_cmd;
 
 //__________________________Libft functions
-// char	*ft_strchr(  char *s, int c);
 int		isnum(char c);
-// char	**ft_split(char   *s, char c);
-// char	*ft_strdup(  char *s1, int n);
-// char	*ft_strjoin(char   *s1, char   *s2);
-// size_t	ft_strlen(  char *str);
-// void	*ft_memcpy(void *dest,   void *src, size_t n);
-// char	*ft_substr(char   *s, unsigned int start, size_t len);
-// char    *ft_strtrim(char  *s1, char  *set);
 char	**free_substrs(char **substrs);
 //___________________________parsing functions
 char	**ft_new_split(  char *s, char c, size_t len);
 void	tokenizing(t_list **head, char **line);
-char    *add_delimetre(char *line);
+char    *add_delimetre(char *line, int length);
 char	*add_spaces(char *line, int new_len);
 int     count_char(char *line, char c);
 int     count_new_len(char *line, int old_len);
@@ -105,7 +98,6 @@ t_cmd	*new_cmd_node(void);
 int		check_if_empty(char *line);
 int     check_special(char c);
 int     check_quotes(int is_quotes, char c);
-void    s_with_d_Q(char *s);
 //_________________________expanding functions
 void    expanding(t_list **head);
 char    *is_var(char **env, char *var);

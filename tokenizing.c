@@ -30,23 +30,24 @@ void	tokenizing(t_list **head, char **line)
 	}
 }
 
-char *add_delimetre(char *line)
+char *add_delimetre(char *line, int length)
 {
 	int		i;
 	int		is_quotes;
 
 	i = 0;
 	is_quotes = 0;
-	while (line[i])
+	while (i < length)
 	{
 		is_quotes = check_quotes(is_quotes, line[i]);
 		if (is_quotes == 0 && line[i] == ' ')
 		{
-			line[i] = '\0';
+			line[i] = 22;
 			while(line[i + 1] == ' ' || line[i + 1] == '\t')
 				i++;
 		}
 		i++;
 	}
+	line[i] = '\0';
 	return (line);
 }

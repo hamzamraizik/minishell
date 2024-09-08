@@ -23,7 +23,8 @@ char	*add_spaces(char *line, int new_len)
 			new_line[args.j] = ' ';
 			while (line[args.i] && line[args.i] == c)
 				new_line[++args.j] = line[args.i++];
-			new_line[++args.j] = ' ';
+			if (line[args.i])
+				new_line[++args.j] = ' ';
 			++args.j;
 		}
 		else
