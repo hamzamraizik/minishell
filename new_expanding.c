@@ -1,8 +1,8 @@
 #include "minishell.h"
 
-char *var_expand(const char *word)
+char *var_expand(  char *word)
 {
-	char *result = strdup("");
+	char *result = ft_strdup("");
 	char *tmp;
 	int i = 0, start = 0, is_quotes = 0;
 

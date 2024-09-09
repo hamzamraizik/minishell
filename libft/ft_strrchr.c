@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 22:58:54 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/08 17:52:07 by hmraizik         ###   ########.fr       */
+/*   Created: 2023/11/06 15:36:52 by hmraizik          #+#    #+#             */
+/*   Updated: 2024/08/26 01:47:56 by hmraizik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-size_t	ft_strlen(const char *str)
+char	*ft_strrchr( char *s, int c)
 {
-	int	i;
-	int	count;
+	int	len;
 
-	i = 0;
-	count = 0;
-	while (str[i] != '\0')
+	len = ft_strlen(s);
+	if (*(s + len) == 0 && (char)c == 0)
+		return ((char *)(s + len));
+	len--;
+	while (len >= 0)
 	{
-		count += 1;
-		i++;
+		if ((char)c == s[len])
+			return ((char *)&s[len]);
+		len--;
 	}
-	return (count);
+	return (NULL);
 }

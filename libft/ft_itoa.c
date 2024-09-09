@@ -1,40 +1,52 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/23 18:54:48 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/08 17:52:07 by hmraizik         ###   ########.fr       */
+/*   Created: 2023/12/23 13:47:39 by hmraizik          #+#    #+#             */
+/*   Updated: 2023/12/24 18:15:39 by hmraizik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+static size_t	count_digits(int n)
 {
-	char	*str;
-	int		s1_len;
-	int		s2_len;
-	int		i;
+	size_t	i;
 
-	i = 0;
-	if (!s1 || !s2)
-		return (0);
-	s1_len = ft_strlen(s1);
-	s2_len = ft_strlen(s2);
-	str = malloc(sizeof(char) * (s1_len + s2_len + 1));
-	if (!str)
-		return (NULL);
-	while (s1[i])
+	i = !n;
+	if (n < 0)
+		i++;
+	while (n != 0)
 	{
-		str[i] = s1[i];
+		n = n / 10;
 		i++;
 	}
-	i = 0;
-	while (s2[i])
-		str[s1_len++] = s2[i++];
-	str[s1_len] = '\0';
+	return (i);
+}
+
+char	*ft_itoa(int n)
+{
+	char		*str;
+	size_t		count;
+	long int	number;
+
+	number = n;
+	count = count_digits(n);
+	str = (char *)malloc(sizeof(char) * (count + 1));
+	if (!str)
+		return (NULL);
+	if (n < 0)
+		number *= -1;
+	str[count] = 0;
+	while (count--)
+	{
+		str[count] = number % 10 + '0';
+		number /= 10;
+	}
+	if (n < 0)
+		*str = '-';
 	return (str);
 }

@@ -6,13 +6,14 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 13:44:52 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/07/26 14:47:36 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/09/09 00:51:42 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
+#include <stdio.h>
 
-static int	count_word(const char *s, char c)
+static int	count_word( char *s, char c)
 {
 	int	count;
 	int	c_fond;
@@ -44,7 +45,7 @@ static char	**free_substrs(char **substrs)
 	return (0);
 }
 
-static int	word_len(char const *s, char c)
+static int	word_len(char  *s, char c)
 {
 	int	count;
 
@@ -54,7 +55,7 @@ static int	word_len(char const *s, char c)
 	return (count);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split(char  *s, char c)
 {
 	char	**substrs;
 	int		i;
@@ -68,11 +69,12 @@ char	**ft_split(char const *s, char c)
 	i = 0;
 	while (*s)
 	{
-		while (*s && *s == c)
+		while (*s && (*s == c || *s == ' '))
 			s++;
 		if (*s)
 		{
 			len = word_len(s, c);
+			printf("\n_____len: %d _______\n", len);
 			substrs[i] = ft_substr(s, 0, len);
 			if (!substrs[i++])
 				return (free_substrs(substrs));
