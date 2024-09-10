@@ -15,7 +15,7 @@ char *expand_variable(  char *str, int *index)
 	result = NULL;
 	while (str[i] && str[i] != ' ' && (isalnum(str[i]) || str[i] == '_') && i++)
 		Name_length++;
-	name = malloc(Name_length + 1);
+	name = malloc(Name_length + 1 * sizeof(char));
 	if (!name)
 		return (printf("malloc failed!\n"), NULL);
 	while (isalnum(str[*index]) || str[*index] == '_')

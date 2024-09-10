@@ -24,7 +24,7 @@ char	**fill_cmds_array(t_list *head)
 	i = 0;
 	tmp = head;
 	cmds_count = count_cmds(head);
-	cmds = malloc(cmds_count + 1);
+	cmds = malloc((cmds_count + 1) * sizeof(char *));
 	if (!cmds)
 		return (NULL);
 	while (tmp && tmp->type != PIPE)
@@ -53,16 +53,16 @@ int	count_type(t_list *head, int type)
 
 void	allocate_args(t_list *head ,t_files *files)
 {
-	files->infiles = malloc(count_type(head, IN) + 1);
+	files->infiles = malloc((count_type(head, IN) + 1) * sizeof(char *));
 	if (!files->infiles)
 		return ;
-	files->outfiles = malloc(count_type(head, OUT) + 1);
+	files->outfiles = malloc((count_type(head, OUT) + 1) * sizeof(char *));
 	if (!files->outfiles)
 		return ;
-	files->appendfiles = malloc(count_type(head, APPEND) + 1);
+	files->appendfiles = malloc((count_type(head, APPEND) + 1) * sizeof(char *));
 	if (!files->appendfiles)
 		return ;
-	files->delemetre = malloc(count_type(head, DELEMETRE) + 1);
+	files->delemetre = malloc((count_type(head, DELEMETRE) + 1) * sizeof(char *));
 	if (!files->delemetre)
 		return ;
 }
