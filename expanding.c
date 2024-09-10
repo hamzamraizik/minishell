@@ -213,7 +213,7 @@ int	normal_var(char **result,  char *word, int *i, int *start)
 	int		flag;
 
 	flag = 0;
-	if (word[(*i)] == '$' && word[(*i) + 1] != '$' && isalnum(word[(*i) + 1]))
+	if (word[(*i)] == '$' && word[(*i) + 1] != '$' && ft_isalnum(word[(*i) + 1]))
 	{
 		flag = 1;
 		take_previous(result, word, *start, (*i));

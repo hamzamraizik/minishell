@@ -84,13 +84,12 @@ void	parse_line(char *line, t_list	**head, int length)
 
 	*head = NULL;
 	new_line = NULL;
-	if (!line) // Added check for NULL line
+	if (!line)
 		return;
-	length = ft_strlen(line);
 	line = add_delimetre(line, length);
-	new_line = ft_new_split(line, 22, length);
-	if (!new_line) // Check for allocation failure
-		return;
+	new_line = ft_new_split(line, '\0', length);
+	if (!new_line)
+		return ;
 	tokenizing(head, new_line);
 	free(new_line);
 }
@@ -121,9 +120,9 @@ int	main(int argc, char **argv, char **envp)
 	char    *new_line;
 	t_list	*head;
 	t_cmd	*cmd_list;
-	int		i;
+	// int		i;
 
-	i = 0;
+	// i = 0;
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -150,18 +149,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 		expanding(&head);
 		cmd_list = fill_cmds_list(&head);
-		t_cmd *tmpp = cmd_list;
-		while (tmpp)
-		{
-			i = 0;
-			while(tmpp->cmd[i])
-			{
-				printf("COMMAND:  %s ----- INFILES: %s \n", tmpp->cmd[i], tmpp->files.infiles[i]);
-				i++;
-			}
-			puts("____________________\n");
-			tmpp = tmpp->next;
-		}
+		// t_cmd *tmpp = cmd_list;
 		t_list *tmp  = head;
 		while (tmp)
 		{
@@ -170,7 +158,6 @@ int	main(int argc, char **argv, char **envp)
 					tmp->type == 6 ? "OUT" : tmp->type == 12 ? "DELEMETRE" : tmp->type == 4 ? "VAR" : "WORD");
 			tmp = tmp->next;
 		}
-		free(line);
 		free(new_line);
 		lstclear(&head);
 		clear_cmds_list(&cmd_list);
