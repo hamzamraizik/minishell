@@ -40,9 +40,9 @@ char *add_delimetre(char *line, int length)
 	while (i < length)
 	{
 		is_quotes = check_quotes(is_quotes, line[i]);
-		if (is_quotes == 0 && line[i] == ' ')
+		if (is_quotes == 0 && (line[i] == ' ' || line[i] == '\t'))
 		{
-			line[i] = 22;
+			line[i] = '\0';
 			while(line[i + 1] == ' ' || line[i + 1] == '\t')
 				i++;
 		}

@@ -6,7 +6,7 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 13:44:52 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/09/09 00:51:42 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/09/10 01:03:33 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ char	**ft_split(char  *s, char c)
 		if (*s)
 		{
 			len = word_len(s, c);
-			printf("\n_____len: %d _______\n", len);
 			substrs[i] = ft_substr(s, 0, len);
 			if (!substrs[i++])
 				return (free_substrs(substrs));
