@@ -1,21 +1,21 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
 
-int check_multi_pipes(char *line)
+int	check_multi_pipes(char *line)
 {
 	int	i;
 
 	i = 0;
-	while(line[i])
+	while (line[i])
 	{
-		if ((line[i] == '|' && line[i + 1] == '|' && line[i+2] == '|') ||
-				(line[i] == '|' && line[i + 1] == ' ' && line[i + 2] == '|'))
+		if ((line[i] == '|' && line[i + 1] == '|' && line[i+2] == '|')
+		|| (line[i] == '|' && line[i + 1] == ' ' && line[i + 2] == '|'))
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int in_out_check(char *line)
+int	in_out_check(char *line)
 {
 	int	i;
 
@@ -36,8 +36,8 @@ int in_out_check(char *line)
 
 int	first_syntax_check(char *line)
 {
-	int		is_quotes;
-	int		i;
+	int	is_quotes;
+	int	i;
 
 	is_quotes = i = 0;
 	while (line[i])
@@ -45,11 +45,14 @@ int	first_syntax_check(char *line)
 	if (is_quotes == 1 || is_quotes == 2)
 		return (printf("mini_hell: syntax_error, quotes not closed\n"), 1);
 	if (line && (line[0] == '|' || line[ft_strlen(line) - 1] == '|'))
-		return (printf("mini_hell: syntax error near unexpected token `|'\n"), 1);
+		return (
+			printf("mini_hell: syntax error near unexpected token `|'\n"), 1);
 	if (check_multi_pipes(line))
-		return (printf("mini_hell: syntax error near unexpected token `|'\n"), 1);
+		return (
+			printf("mini_hell: syntax error near unexpected token `|'\n"), 1);
 	if (in_out_check(line))
-		return (printf("mini_hell: syntax error\n"), 1);
+		return (
+			printf("mini_hell: syntax error\n"), 1);
 	return 0;
 }
 
@@ -114,6 +117,10 @@ void	clear_cmds_list(t_cmd **cmd_list)
 	}
 }
 
+// void	ft_heredoc(t_cmd *head)
+// {
+// }
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -149,13 +156,22 @@ int	main(int argc, char **argv, char **envp)
 		}
 		expanding(&head);
 		cmd_list = fill_cmds_list(&head);
-		// t_cmd *tmpp = cmd_list;
-		t_list *tmp  = head;
+		//implement heredoc exec with signals
+		// ft_heredoc(cmd_list);
+		// t_list *tmp  = head;
+		// while (tmp)
+		// {
+		// 	printf("%s =====>	%s\n", tmp->content, tmp->type == 1 ? "PIPE" : 
+		// 		tmp->type == 2 ? "HEREDOC" : tmp->type == 3 ? "APPEND" : tmp->type == 5 ? "IN" : 
+		// 			tmp->type == 6 ? "OUT" : tmp->type == 12 ? "DELEMETRE" : tmp->type == 4 ? "VAR" : "WORD");
+		// 	tmp = tmp->next;
+		// }
+		t_cmd *tmp = cmd_list;
 		while (tmp)
 		{
-			printf("%s =====>	%s\n", tmp->content, tmp->type == 1 ? "PIPE" : 
-				tmp->type == 2 ? "HEREDOC" : tmp->type == 3 ? "APPEND" : tmp->type == 5 ? "IN" : 
-					tmp->type == 6 ? "OUT" : tmp->type == 12 ? "DELEMETRE" : tmp->type == 4 ? "VAR" : "WORD");
+			int i = 0;
+			while (tmp && tmp->cmd[i])
+				printf("%s\n", tmp->cmd[i++]);
 			tmp = tmp->next;
 		}
 		free(new_line);

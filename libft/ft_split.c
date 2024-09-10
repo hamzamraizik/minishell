@@ -6,7 +6,7 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 13:44:52 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/09/10 01:03:33 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/09/10 21:37:52 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static char	**free_substrs(char **substrs)
 	return (0);
 }
 
-static int	word_len(char  *s, char c)
+static int	word_len(char *s, char c)
 {
 	int	count;
 
@@ -55,7 +55,7 @@ static int	word_len(char  *s, char c)
 	return (count);
 }
 
-char	**ft_split(char  *s, char c)
+char	**ft_split(char *s, char c)
 {
 	char	**substrs;
 	int		i;

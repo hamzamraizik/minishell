@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
  /*this func when a var expanded, replaced with it
  	real value in the env if it exist, if not exist
 		then it will replaced by '\0'*/

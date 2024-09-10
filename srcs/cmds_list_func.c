@@ -1,14 +1,20 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 
 int count_cmds(t_list *head)
 {
-	int count;
+	int		count;
+	t_list	*last;
 
 	count = 0;
+	last = head;
 	while (head && head->type != PIPE)
 	{
-		count++;
+		if ((head->type == WORD || head->type == VAR)
+			&& (last && (last->type == WORD || last->type == VAR
+				|| last->type == DELEMETRE)))
+			count++;
+		last = head;
 		head = head->next;
 	}
 	return (count);
@@ -19,6 +25,7 @@ char	**fill_cmds_array(t_list *head)
 	char	**cmds;
 	int		cmds_count;
 	t_list	*tmp;
+	t_list	*last;
 	int		i;
 
 	i = 0;
@@ -27,11 +34,16 @@ char	**fill_cmds_array(t_list *head)
 	cmds = malloc((cmds_count + 1) * sizeof(char *));
 	if (!cmds)
 		return (NULL);
+	last = tmp;
 	while (tmp && tmp->type != PIPE)
 	{
-		cmds[i] = tmp->content;
+		//check if it not a infiles or outfiles or appendfiles or delemetre
+		if ((tmp->type == WORD || tmp->type == VAR) &&
+			(last && (last->type == WORD || last->type == VAR
+				|| last->type == DELEMETRE)))
+			cmds[i++] = tmp->content;
+		last = tmp;
 		tmp = tmp->next;
-		i++;
 	}
 	cmds[i] = NULL;
 	return (cmds);

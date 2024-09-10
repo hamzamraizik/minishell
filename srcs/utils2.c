@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 /*this func loop over line and when fond space will replace it
 	by '\0' and skip if there multiple spaces . i'm using 

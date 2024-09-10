@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "libft/libft.h"
+#include "../libft/libft.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 

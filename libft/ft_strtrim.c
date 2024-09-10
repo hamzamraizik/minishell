@@ -6,13 +6,13 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 00:46:07 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/09/09 00:33:49 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/09/10 21:42:30 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_kayna(char  c, char  *set)
+static int	ft_kayna(char c, char *set)
 {
 	int	i;
 
@@ -26,18 +26,16 @@ static int	ft_kayna(char  c, char  *set)
 	return (0);
 }
 
-char	*ft_strtrim(char  *s1, char  *set)
+char	*ft_strtrim(char *s1, char *set)
 {
 	int	start;
 	int	end;
-	// int	i;
 
 	if (!s1 || !set)
 		return (NULL);
 	if (*s1 == 0)
 		return (ft_strdup(""));
 	start = 0;
-	// i = 0;
 	end = ft_strlen(s1) - 1;
 	while (s1[start] && ft_kayna(s1[start], set))
 		start++;
