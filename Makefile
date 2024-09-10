@@ -4,8 +4,8 @@ CFILES = main.c utils1.c  \
  ft_env.c list_utils.c cmds_list_func.c
 OFILES = $(CFILES:.c=.o)
 CFLAGS = -Wall -Wextra  -Werror #-fsanitize=address -g
-LDFLAGS = -L/usr/lib/x86_64-linux-gnu -lreadline
-CC = gcc
+LDFLAGS = -lreadline
+CC = cc
 
 all: $(NAME)
 

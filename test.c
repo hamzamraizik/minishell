@@ -45,7 +45,7 @@ char	*ft_substr(char  *s, unsigned int start, size_t len)
 	}
 	// if (len > ft_strlen(s) - (size_t)start)
 	// 	len = ft_strlen(s) - (size_t)start;
-	substr = malloc(len + 1);
+	substr = malloc(len + 1 * sizeof(char));
 	if (!substr)
 		return (NULL);
 	i--;

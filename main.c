@@ -132,13 +132,13 @@ int	main(int argc, char **argv, char **envp)
 		line = readline("Minishell -> ");
 		if (!line)
 			return (1);
+		 if (*line && !check_if_empty(line))
+			add_history(line);
 		if (check_if_empty(line) || first_syntax_check(line))
 		{
 			free(line);
 			continue ;
 		}
-		 if (*line)
-			add_history(line);
 		new_line = add_spaces(line, count_new_len(line, ft_strlen(line)));
 		parse_line(new_line, &head, ft_strlen(new_line));
 		if (syntax_error(head) == 1)
@@ -159,6 +159,7 @@ int	main(int argc, char **argv, char **envp)
 			tmp = tmp->next;
 		}
 		free(new_line);
+		free(line);
 		lstclear(&head);
 		clear_cmds_list(&cmd_list);
 	}
