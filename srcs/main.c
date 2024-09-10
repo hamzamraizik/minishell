@@ -117,9 +117,49 @@ void	clear_cmds_list(t_cmd **cmd_list)
 	}
 }
 
-// void	ft_heredoc(t_cmd *head)
-// {
-// }
+void	demo_printf_list(t_cmd *tmp)
+{
+		while (tmp)
+		{
+			int i = 0;
+			printf("\n*********************************************************************************\n");
+			while (tmp && tmp->cmd[i])
+			{
+				printf("cmd[%d]: %s		", i, tmp->cmd[i]);
+				i++;
+			}
+			printf("\n*********************************************************************************\n");
+			i = 0;
+			while (tmp && tmp->files.infiles[i])
+			{
+				printf("infiles[%d]: %s		", i, tmp->files.infiles[i]);
+				i++;
+			}
+			printf("\n*********************************************************************************\n");
+			i = 0;
+			while (tmp && tmp->files.outfiles[i])
+			{
+				printf("outfiles[%d]: %s	", i, tmp->files.outfiles[i]);
+				i++;
+			}
+			printf("\n*********************************************************************************\n");
+			i = 0;
+			while (tmp && tmp->files.appendfiles[i])
+			{
+				printf("appendfiles[%d]: %s		", i, tmp->files.appendfiles[i]);
+				i++;
+			}
+			printf("\n*********************************************************************************\n");
+			i = 0;
+			while (tmp && tmp->files.delemetre[i])
+			{
+				printf("delemetre[%d]: %s		", i, tmp->files.delemetre[i]);
+				i++;
+			}
+			printf("\n*********************************************************************************\n");
+			tmp = tmp->next;
+		}
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -127,9 +167,7 @@ int	main(int argc, char **argv, char **envp)
 	char    *new_line;
 	t_list	*head;
 	t_cmd	*cmd_list;
-	// int		i;
 
-	// i = 0;
 	(void)argc;
 	(void)argv;
 	(void)envp;
@@ -156,24 +194,7 @@ int	main(int argc, char **argv, char **envp)
 		}
 		expanding(&head);
 		cmd_list = fill_cmds_list(&head);
-		//implement heredoc exec with signals
-		// ft_heredoc(cmd_list);
-		// t_list *tmp  = head;
-		// while (tmp)
-		// {
-		// 	printf("%s =====>	%s\n", tmp->content, tmp->type == 1 ? "PIPE" : 
-		// 		tmp->type == 2 ? "HEREDOC" : tmp->type == 3 ? "APPEND" : tmp->type == 5 ? "IN" : 
-		// 			tmp->type == 6 ? "OUT" : tmp->type == 12 ? "DELEMETRE" : tmp->type == 4 ? "VAR" : "WORD");
-		// 	tmp = tmp->next;
-		// }
-		t_cmd *tmp = cmd_list;
-		while (tmp)
-		{
-			int i = 0;
-			while (tmp && tmp->cmd[i])
-				printf("%s\n", tmp->cmd[i++]);
-			tmp = tmp->next;
-		}
+		demo_printf_list(cmd_list);
 		free(new_line);
 		free(line);
 		lstclear(&head);
