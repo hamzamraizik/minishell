@@ -109,5 +109,6 @@ void	allocate_args(t_list *head, t_files *files);
 t_files	fill_files(t_list *head);
 t_cmd	*fill_cmds_list(t_list **head);
 char	**fill_cmds_array(t_list *head);
+void    ft_heredoc(t_cmd *cmd);
 
 #endif // MINISHELL_H

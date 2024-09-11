@@ -6,7 +6,7 @@
 /*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 18:54:48 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/09/10 21:43:19 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/09/11 04:17:26 by mizoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,15 @@ char	*ft_strjoin(char *s1, char *s2)
 	int		i;
 
 	i = 0;
-	if (!s1 || !s2)
+	if (!s2)
 		return (0);
+	if (!s1)
+		return (ft_strdup(s2));
 	s1_len = ft_strlen(s1);
 	s2_len = ft_strlen(s2);
 	str = malloc(sizeof(char) * (s1_len + s2_len + 1));
 	if (!str)
-		return (NULL);
+		return (free(s1), NULL);
 	while (s1[i])
 	{
 		str[i] = s1[i];

@@ -194,7 +194,8 @@ int	main(int argc, char **argv, char **envp)
 		}
 		expanding(&head);
 		cmd_list = fill_cmds_list(&head);
-		demo_printf_list(cmd_list);
+		ft_heredoc(cmd_list);
+		// demo_printf_list(cmd_list);
 		free(new_line);
 		free(line);
 		lstclear(&head);
