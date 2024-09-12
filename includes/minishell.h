@@ -100,6 +100,7 @@ int     check_special(char c);
 int     check_quotes(int is_quotes, char c);
 //_________________________expanding functions
 void    expanding(t_list **head);
+char	*handle_var(  char *word);
 char    *is_var(char **env, char *var);
 void	take_previous(char **result,   char *word, int start, int i);
 //____________________cmds's list functions

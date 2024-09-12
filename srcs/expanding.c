@@ -277,7 +277,7 @@ char	*handle_home_symbol(char *str)
 	start = 0;
 	if (str && str[i] && str[i] == '~' && str[i + 1] == '/')
 	{
-		result = getenv("HOME");
+		result = ft_strdup(getenv("HOME"));
 		result = ft_strjoin(result, "/");
 		start += 2;
 		while (str[i])
@@ -285,7 +285,7 @@ char	*handle_home_symbol(char *str)
 		take_previous(&result, str, start, i);
 	}
 	else if (str && str[i] && str[i] == '~' && !str[i + 1])
-		result = getenv("HOME");
+		result = ft_strdup(getenv("HOME"));
 	else
 		return(ft_strdup(str));
 	return (result);
