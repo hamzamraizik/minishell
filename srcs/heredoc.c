@@ -35,7 +35,7 @@ void    ft_heredoc(t_cmd *cmd)
 	char    *leak;
 	char    *buffer;
 	char    *file_name;
-	int		second;
+	int	second;
 	t_files files;
 	bool    cond;
 
