@@ -24,6 +24,7 @@
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"
 
+extern int g_signal;
 
 typedef struct s_args
 {
@@ -111,5 +112,6 @@ t_files	fill_files(t_list *head);
 t_cmd	*fill_cmds_list(t_list **head);
 char	**fill_cmds_array(t_list *head);
 void    ft_heredoc(t_cmd *cmd);
+void	signals(void);
 
 #endif // MINISHELL_H

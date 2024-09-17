@@ -20,6 +20,31 @@ int count_cmds(t_list *head)
 	return (count);
 }
 
+char	*remove_cmd_quotes(char *s)
+{
+	int		i;
+	int		j;
+	int		is_quote;
+	char	*new;
+
+	i = 0;
+	j = 0;
+	is_quote = 0;
+	new = malloc(ft_strlen(s) + 1 * sizeof(char));
+	if (!new)
+		return (NULL);
+	while (s[i])
+	{
+		is_quote = check_quotes(is_quote, s[i]);
+		if ((is_quote != 2 && s[i] == '\'') || (is_quote != 1 && s[i] == '\"'))
+			i++;
+		else
+			new[j++] = s[i++];
+	}
+	new[j] = '\0';
+	return (new);
+}
+
 char	**fill_cmds_array(t_list *head)
 {
 	char	**cmds;
@@ -41,7 +66,13 @@ char	**fill_cmds_array(t_list *head)
 		if ((tmp->type == WORD || tmp->type == VAR) &&
 			(last && (last->type == WORD || last->type == VAR
 				|| last->type == DELEMETRE)))
-			cmds[i++] = tmp->content;
+		{
+			// chack if it contain quotes thenremove any initial and closed quotes
+			if (ft_strchr(tmp->content, '\'') || ft_strchr(tmp->content, '\"'))
+				cmds[i++] = remove_cmd_quotes(tmp->content);
+			else
+				cmds[i++] = tmp->content;
+		}
 		last = tmp;
 		tmp = tmp->next;
 	}

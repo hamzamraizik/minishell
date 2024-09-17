@@ -1,4 +1,5 @@
 #include "../includes/minishell.h"
+int g_signal = 0;
 
 int	check_multi_pipes(char *line)
 {
@@ -44,6 +45,8 @@ int	first_syntax_check(char *line)
 		is_quotes = check_quotes(is_quotes, line[i++]);
 	if (is_quotes == 1 || is_quotes == 2)
 		return (printf("mini_hell: syntax_error, quotes not closed\n"), 1);
+	while(*line == ' ' || *line == '\t')
+		line++;
 	if (line && (line[0] == '|' || line[ft_strlen(line) - 1] == '|'))
 		return (
 			printf("mini_hell: syntax error near unexpected token `|'\n"), 1);
@@ -53,7 +56,7 @@ int	first_syntax_check(char *line)
 	if (in_out_check(line))
 		return (
 			printf("mini_hell: syntax error\n"), 1);
-	return 0;
+	return (0);
 }
 
 int	count_new_len(char *line, int old_len)
@@ -161,6 +164,24 @@ void	demo_printf_list(t_cmd *tmp)
 		}
 }
 
+void	sig_handler(int signo)
+{
+	if (signo == SIGINT)
+	{
+		// g_signal = 1;
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+void	signals(void)
+{
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
+	rl_catch_signals = 0;
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -172,6 +193,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
 	head = NULL;
+	g_signal = 0;
+	signals();
 	while (1)
 	{
 		line = readline("Minishell -> ");
