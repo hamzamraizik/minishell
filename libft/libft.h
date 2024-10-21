@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ochangli <ochangli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 15:01:41 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/09/10 21:36:25 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/10/18 03:33:59 by ochangli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*ft_strnstr( char *haystack, char *needle, size_t len);
 int		ft_atoi( char *str);
 void	*ft_calloc(size_t n_elements, size_t s_elements);
 char	*ft_strdup( char *s1);
-
+char	*ft_strndup(char *s1, int n);
 char	*ft_substr(char *s, unsigned int start, size_t len);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strtrim(char *s1, char *set);

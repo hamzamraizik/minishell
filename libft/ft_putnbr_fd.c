@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ochangli <ochangli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/15 18:29:17 by hmraizik          #+#    #+#             */
-/*   Updated: 2023/12/25 15:09:59 by hmraizik         ###   ########.fr       */
+/*   Updated: 2024/10/17 08:50:17 by ochangli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,3 @@ void	ft_putnbr_fd(int n, int fd)
 			ft_putchar_fd('0' + n, fd);
 	}
 }
-// #include<fcntl.h>
-// #include<stdio.h>
-// int main()
-// {
-// 	close(1);
-// 	int i = open("hi.txt", O_CREAT | O_RDWR);
-// 	printf("hello world!");
-// }

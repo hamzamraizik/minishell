@@ -1,3 +1,0 @@
-//      isalnum()
-//      strndup()
-//      ft_strdup()

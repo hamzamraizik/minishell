@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mizoo <mizoo@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/23 18:54:48 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/09/11 04:17:26 by mizoo            ###   ########.fr       */
+/*   Updated: 2024/09/18 22:44:14 by hmraizik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,5 @@ char	*ft_strjoin(char *s1, char *s2)
 	while (s2[i])
 		str[s1_len++] = s2[i++];
 	str[s1_len] = '\0';
-	free (s1);
-	s1 = NULL;
-	return (str);
+	return (free (s1), s1 = NULL, str);
 }

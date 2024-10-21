@@ -6,7 +6,7 @@
 /*   By: hmraizik <hmraizik@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 01:25:24 by hmraizik          #+#    #+#             */
-/*   Updated: 2024/08/26 01:47:56 by hmraizik         ###   ########.fr       */
+/*   Updated: 2024/10/16 06:58:32 by hmraizik         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ int	ft_atoi( char *str)
 		result = result * 10 + str[i] - '0';
 		i++;
 	}
-	if (result > 9223372036854775807 && sign == -1)
+	if (result >= 9223372036854775807 && sign == -1)
 		return (0);
-	if (result >= 9223372036854775807 && sign == 1)
+	if (result > 9223372036854775807 && sign == 1)
 		return (-1);
 	return (result * sign);
 }
